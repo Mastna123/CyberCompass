@@ -1,0 +1,126 @@
+# =========================================================
+# CyberCompass .gitignore
+# Stack: Python/Flask, SQLite, Docker, Proxmox VE, Guacamole
+# =========================================================
+
+# ---------------------------------------------------------
+# Secrets & environment config (NEVER commit)
+# Commit .env.example with fake values instead
+# ---------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+secrets/
+*.secret
+proxmox_token*
+*api_token*
+
+# ---------------------------------------------------------
+# Python
+# ---------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+venv/
+.venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# ---------------------------------------------------------
+# Flask
+# instance/ holds local config and the SQLite DB
+# ---------------------------------------------------------
+instance/
+.webassets-cache
+flask_session/
+
+# ---------------------------------------------------------
+# SQLite (local dev databases)
+# Commit schema.sql / seed scripts, not the .db file
+# ---------------------------------------------------------
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+
+# ---------------------------------------------------------
+# Docker
+# Commit Dockerfiles and docker-compose.yml;
+# keep personal overrides and volume data local
+# ---------------------------------------------------------
+docker-compose.override.yml
+compose.override.yml
+.docker-data/
+volumes/
+
+# ---------------------------------------------------------
+# Guacamole
+# Real config contains DB passwords; commit an .example copy
+# ---------------------------------------------------------
+guacamole.properties
+!guacamole.properties.example
+user-mapping.xml
+!user-mapping.xml.example
+
+# ---------------------------------------------------------
+# VM / disk images & Proxmox backups (huge, never commit)
+# ---------------------------------------------------------
+*.iso
+*.qcow2
+*.vmdk
+*.vdi
+*.ova
+*.ovf
+*.img
+*.raw
+*.vma
+*.vma.zst
+*.vma.gz
+*.vma.lzo
+*.tar.zst
+
+# ---------------------------------------------------------
+# Logs & temp
+# ---------------------------------------------------------
+logs/
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# ---------------------------------------------------------
+# Editors (VS Code: share settings/extensions, not the rest)
+# ---------------------------------------------------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+.idea/
+
+# ---------------------------------------------------------
+# OS junk
+# ---------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---------------------------------------------------------
+# Design exports (keep source files in Figma, not git)
+# ---------------------------------------------------------
+*.fig
