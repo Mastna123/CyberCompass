@@ -54,12 +54,17 @@ def get_track(track_id):
 
 
 def track_progress():
-    """How many labs are done in each track (for the progress bars)."""
+    """For each track: how many labs are done, the total, and the percent done.
+
+    Used by the "Progress by track" bars on the Home page.
+    """
     rows = []
-    for t in TRACKS:
-        labs = [lab for lab in LABS if lab["track"] == t["id"]]
-        done = len([lab for lab in labs if lab["status"] == "done"])
-        rows.append({**t, "done": done, "total": len(labs)})
+    for track in TRACKS:
+        track_labs = [lab for lab in LABS if lab["track"] == track["id"]]
+        done = len([lab for lab in track_labs if lab["status"] == "done"])
+        total = len(track_labs)
+        percent = round(done / total * 100) if total else 0
+        rows.append({**track, "done": done, "total": total, "percent": percent})
     return rows
 
 def closest_track():

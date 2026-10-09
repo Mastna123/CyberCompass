@@ -442,3 +442,80 @@ a {
         flex-wrap: wrap;
     }
 }
+
+
+/* ---------- Text styles ----------
+   Use these instead of style="font-size..." in templates. */
+.cc-subtitle {
+    font-size: 15px;
+    color: var(--muted);
+}
+/* line under a page title */
+.cc-meta {
+    font-size: 13px;
+    color: var(--muted);
+}
+/* small gray details: dates, "15 min" */
+.cc-label {
+    font-size: 14px;
+    font-weight: 500;
+}
+/* list labels, track names */
+.cc-item-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+/* a lab name in a list */
+.cc-stat {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+}
+/* "3 of 11 labs done" */
+
+/* ---------- Track colors ----------
+   Add class track-1 ... track-5 to a tile or bar and it picks up that track's colors. */
+.cc-tile.track-1 {
+    background: var(--track-1-tint);
+    color: var(--track-1-ink);
+}
+
+.cc-tile.track-2 {
+    background: var(--track-2-tint);
+    color: var(--track-2-ink);
+}
+
+.cc-tile.track-3 {
+    background: var(--track-3-tint);
+    color: var(--track-3-ink);
+}
+
+.cc-tile.track-4 {
+    background: var(--track-4-tint);
+    color: var(--track-4-ink);
+}
+
+.cc-tile.track-5 {
+    background: var(--track-5-tint);
+    color: var(--track-5-ink);
+}
+
+.cc-track > span.track-1 {
+    background: var(--track-1);
+}
+
+.cc-track > span.track-2 {
+    background: var(--track-2);
+}
+
+.cc-track > span.track-3 {
+    background: var(--track-3);
+}
+
+.cc-track > span.track-4 {
+    background: var(--track-4);
+}
+
+.cc-track > span.track-5 {
+    background: var(--track-5);
+}
