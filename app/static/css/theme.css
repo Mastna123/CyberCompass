@@ -1,0 +1,50 @@
+﻿/*
+  THEME TOKENS
+  Change only this file (and the font link in base.html) to switch themes.
+  As of 10/9/26, the current theme chosen was: Option I, Starlight
+*/
+:root {
+    /* Fonts */
+    --font-heading: "Sora", system-ui, sans-serif;
+    --font-body: "Figtree", system-ui, sans-serif;
+
+    /* Page and text */
+    --bg: #F6F5FC;
+    --card: #FFFFFF;
+    --ink: #1C1A3D;
+    --muted: #5B5980;
+    --line: #E3E1F2;
+
+    /* Main action color (indigo) */
+    --primary: #4338CA;
+    --primary-dark: #3730A3;
+    --primary-tint: #E8E7FB;
+    --on-primary: #FFFFFF;
+
+    /* Status colors */
+    --success: #15803D;
+    --success-tint: #DCF5E4;
+    --danger: #C2412D;
+    --danger-tint: #FCE5E0;
+    --warning: #F2B416;
+    --warning-tint: #FDF2CF;
+
+    /* Feature cards (Resume card, lab hero): midnight with stars */
+    --hero-bg: #1E1B4B;
+    --hero-ink: #FFFFFF;
+    --hero-muted: #C7C4EE;
+    --hero-track: #37347A;
+    --star: #F2B416;
+
+    /* One color per training track */
+    --track-1: #4338CA; /* Identity and access */
+    --track-2: #7C5CD6; /* Data handling and sharing */
+    --track-3: #0E7490; /* Network and device */
+    --track-4: #E0533D; /* Social engineering */
+    --track-5: #F2B416; /* Emerging risk */
+
+    /* Shape */
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 16px rgba(67, 56, 202, 0.07);
+}

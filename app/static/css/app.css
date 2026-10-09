@@ -1,3 +1,144 @@
-﻿body {
-    background: #F4F6FB;
+﻿/* Uses only the variables from theme.css */
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--ink);
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+}
+
+.text-muted-cc {
+    color: var(--muted);
+}
+
+.eyebrow {
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+/* Nav */
+.cc-nav {
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+    height: 72px;
+}
+
+.cc-brand {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.cc-nav .nav-link {
+    color: var(--ink);
+    border-radius: 999px;
+    padding: .4rem 1rem;
+}
+
+    .cc-nav .nav-link.active {
+        background: var(--primary-tint);
+        color: var(--primary-dark);
+        font-weight: 600;
+    }
+
+.cc-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--on-primary);
+    font-weight: 700;
+    font-size: .85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Cards */
+.cc-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+}
+
+/* Chips (small pills like "1,240 XP" or "Due Oct 10") */
+.cc-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .3rem .75rem;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 600;
+    background: var(--line);
+    color: var(--ink);
+}
+
+    .cc-chip.xp {
+        background: var(--warning-tint);
+    }
+
+    .cc-chip.primary {
+        background: var(--primary-tint);
+        color: var(--primary-dark);
+    }
+
+    .cc-chip.success {
+        background: var(--success-tint);
+        color: var(--success);
+    }
+
+/* Buttons */
+.btn-cc {
+    background: var(--primary);
+    color: var(--on-primary);
+    border: 0;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    padding: .6rem 1.25rem;
+}
+
+    .btn-cc:hover {
+        background: var(--primary-dark);
+        color: var(--on-primary);
+    }
+
+.btn-cc-outline {
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    padding: .6rem 1.25rem;
+}
+
+/* Progress bars */
+.cc-track {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--line);
+    overflow: hidden;
+}
+
+    .cc-track > span {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+    }
+
+/* Keyboard focus is always visible (accessibility) */
+:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
 }
