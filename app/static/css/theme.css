@@ -4,7 +4,6 @@
   As of 10/9/26, the current theme chosen was: Option I, Starlight
 */
 :root {
-    /* Fonts */
     --font-heading: "Sora", system-ui, sans-serif;
     --font-body: "Figtree", system-ui, sans-serif;
 
@@ -12,36 +11,52 @@
     --bg: #F6F5FC;
     --card: #FFFFFF;
     --ink: #1C1A3D;
+    --ink-2: #34325A;
     --muted: #5B5980;
     --line: #E3E1F2;
+    --neu: #ECEAF7; /* empty progress bars, gray chips */
 
-    /* Main action color (indigo) */
+    /* Brand */
     --primary: #4338CA;
     --primary-dark: #3730A3;
     --primary-tint: #E8E7FB;
     --on-primary: #FFFFFF;
+    --accent: #7C5CD6; /* avatar */
 
-    /* Status colors */
-    --success: #15803D;
+    /* Status: base color, light background, readable text */
+    --success: #16A34A;
     --success-tint: #DCF5E4;
-    --danger: #C2412D;
+    --success-ink: #166534;
+    --danger: #E0533D;
     --danger-tint: #FCE5E0;
+    --danger-ink: #A3321F;
     --warning: #F2B416;
     --warning-tint: #FDF2CF;
+    --warning-ink: #7A5400;
 
-    /* Feature cards (Resume card, lab hero): midnight with stars */
+    /* Midnight feature card */
     --hero-bg: #1E1B4B;
     --hero-ink: #FFFFFF;
     --hero-muted: #C7C4EE;
     --hero-track: #37347A;
     --star: #F2B416;
 
-    /* One color per training track */
-    --track-1: #4338CA; /* Identity and access */
-    --track-2: #7C5CD6; /* Data handling and sharing */
-    --track-3: #0E7490; /* Network and device */
-    --track-4: #E0533D; /* Social engineering */
-    --track-5: #F2B416; /* Emerging risk */
+    /* Tracks: bar color, tile background, tile icon */
+    --track-1: #4338CA;
+    --track-1-tint: #E8E7FB;
+    --track-1-ink: #3730A3; /* Identity and access */
+    --track-2: #7C5CD6;
+    --track-2-tint: #EFE9FC;
+    --track-2-ink: #5B3DB5; /* Data handling and sharing */
+    --track-3: #155E75;
+    --track-3-tint: #DDF1F6;
+    --track-3-ink: #155E75; /* Network and device */
+    --track-4: #E0533D;
+    --track-4-tint: #FCE5E0;
+    --track-4-ink: #A3321F; /* Social engineering */
+    --track-5: #F2B416;
+    --track-5-tint: #FDF2CF;
+    --track-5-ink: #7A5400; /* Emerging risk */
 
     /* Shape */
     --radius: 16px;

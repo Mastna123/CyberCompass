@@ -1,17 +1,145 @@
-﻿{% extends "base.html" %}
-
+{% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 
-{% block content %}
-<h1>Welcome back, Alex</h1>
-<p class="text-secondary">Role group: Office staff · Riverside Accounting</p>
+{% block body %}
+{% include "partials/nav.html" %}
+<main class="page stack">
 
-<div class="cc-card mt-4" style="max-width: 420px;">
-    <div class="eyebrow">Your progress</div>
-    <div class="fs-5 fw-bold mb-2">3 of 11 labs done</div>
-    <div class="cc-track mb-3"><span style="width: 27%; background: var(--track-1);"></span></div>
-    <button class="btn btn-cc">Start now</button>
-    <button class="btn btn-cc-outline">Details</button>
-</div>
+    <div class="d-flex align-items-end">
+        <div>
+            <h1 class="page-title">Welcome back, {{ user.first_name }}</h1>
+            <div class="text-muted-cc mt-1" style="font-size: 15px;">Role group: {{ user.role_group }} · {{ user.org }}</div>
+        </div>
+        <a href="#" class="btn-cc-outline lg ms-auto">Browse all labs <i class="bi bi-arrow-right"></i></a>
+    </div>
 
+    <div class="home-grid">
+        <!-- LEFT -->
+        <div class="stack">
+
+            {% if resume_lab %}
+            <section class="cc-hero">
+                <svg class="cc-constellation" viewBox="0 0 104 174" aria-hidden="true">
+                    <polyline points="18,143 35,66 69,101 87,28" fill="none" stroke="#C7C4EE" stroke-opacity=".5" stroke-width="1.2" />
+                    <path d="M18,136 Q19.4,142 26,143.5 Q19.4,145 18,151 Q16.6,145 10,143.5 Q16.6,142 18,136Z" fill="var(--star)" />
+                    <path d="M35,59 Q36.4,65 43,66.5 Q36.4,68 35,74 Q33.6,68 27,66.5 Q33.6,65 35,59Z" fill="var(--star)" />
+                    <path d="M69,94 Q70.4,100 77,101.5 Q70.4,103 69,109 Q67.6,103 61,101.5 Q67.6,100 69,94Z" fill="var(--star)" />
+                    <circle cx="87" cy="28" r="4" fill="var(--hero-bg)" stroke="#C7C4EE" stroke-width="1.2" />
+                </svg>
+
+                <div class="hero-tile"><i class="bi bi-envelope"></i></div>
+                <div class="grow d-flex flex-column gap-2">
+                    <div class="eyebrow">Pick up where you left off</div>
+                    <h2 class="hero-title">{{ resume_lab.scenario_title }}</h2>
+                    <div class="hero-meta">{{ resume_lab.title }} · Step {{ resume_lab.step }} of 4 · {{ resume_lab.time_left }}</div>
+                    <div class="cc-track"><span style="width: {{ resume_lab.step / 4 * 100 }}%;"></span></div>
+                </div>
+                <a href="#" class="btn-cc-white">Resume <i class="bi bi-arrow-right"></i></a>
+            </section>
+            {% endif %}
+
+            <div class="cc-two-up">
+                <!-- Progress ring -->
+                {% set pct = (done_count / total_count * 100) | round | int %}
+                <section class="cc-card d-flex align-items-center gap-4">
+                    <div class="cc-ring" style="--p: {{ pct }};">
+                        <div><strong>{{ done_count }}</strong><small>of {{ total_count }}</small></div>
+                    </div>
+                    <div class="d-flex flex-column gap-1">
+                        <div class="eyebrow">Your progress</div>
+                        <div class="font-heading" style="font-size: 20px; font-weight: 600;">{{ done_count }} of {{ total_count }} labs done</div>
+                        {% if closest %}
+                        <div class="text-muted-cc" style="font-size: 13px;">{{ closest.total - closest.done }} more to finish {{ closest.name }}</div>
+                        {% endif %}
+                        <a href="#" style="font-size: 14px;">See my progress</a>
+                    </div>
+                </section>
+
+                <!-- Next due -->
+                {% if next_due %}
+                {% set t = get_track(next_due.track) %}
+                <section class="cc-card d-flex flex-column gap-3">
+                    <div class="eyebrow">Next due · Quick start</div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="cc-tile lg" style="background: var(--track-{{ t.n }}-tint); color: var(--track-{{ t.n }}-ink);"><i class="bi {{ t.icon }}"></i></span>
+                        <div>
+                            <div style="font-size: 17px; font-weight: 600;">{{ next_due.title }}</div>
+                            <div class="text-muted-cc" style="font-size: 13px;">Due {{ next_due.due }} · {{ next_due.minutes }} min · +{{ next_due.xp }} XP</div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="btn-cc">Start now</a>
+                        <a href="#" class="btn-cc-outline">Details</a>
+                    </div>
+                </section>
+                {% endif %}
+            </div>
+
+            <!-- Assigned to you -->
+            <section class="cc-card">
+                <div class="d-flex align-items-center">
+                    <h2 class="card-title-cc">Assigned to you</h2>
+                    <span class="ms-auto text-muted-cc" style="font-size: 13px;">From your training lead</span>
+                </div>
+                {% for lab in assigned %}
+                {% set t = get_track(lab.track) %}
+                <div class="list-row">
+                    <span class="cc-tile" style="background: var(--track-{{ t.n }}-tint); color: var(--track-{{ t.n }}-ink);"><i class="bi {{ t.icon }}"></i></span>
+                    <div class="grow">
+                        <div style="font-size: 16px; font-weight: 600;">{{ lab.title }}</div>
+                        <div class="text-muted-cc" style="font-size: 13px;">{{ t.name }} · {{ lab.minutes }} min</div>
+                    </div>
+                    <span class="cc-chip">Due {{ lab.due }}</span>
+                    <span class="cc-chip gold">+{{ lab.xp }} XP</span>
+                    <a href="#" class="btn-cc sm">Start</a>
+                </div>
+                {% else %}
+                <p class="text-muted-cc mt-3 mb-0">Nothing assigned right now.</p>
+                {% endfor %}
+            </section>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="stack">
+            <section class="cc-card d-flex flex-column gap-3">
+                <h2 class="card-title-cc">Progress by track</h2>
+                {% for t in tracks %}
+                <div>
+                    <div class="d-flex mb-1">
+                        <span style="font-size: 14px; font-weight: 500;">{{ t.name }}</span>
+                        <span class="ms-auto text-muted-cc" style="font-size: 13px;">{{ t.done }}/{{ t.total }}</span>
+                    </div>
+                    <div class="cc-track"><span style="width: {{ t.done / t.total * 100 }}%; background: var(--track-{{ t.n }});"></span></div>
+                </div>
+                {% endfor %}
+            </section>
+
+            <section class="cc-card">
+                <h2 class="card-title-cc mb-1">Recent results</h2>
+                {% for lab in recent %}
+                <div class="list-row tight">
+                    <span class="cc-tile check"><i class="bi bi-check-lg"></i></span>
+                    <span class="grow" style="font-size: 14px; font-weight: 500;">{{ lab.title }}</span>
+                    <span class="text-muted-cc" style="font-size: 13px;">{{ lab.completed }}</span>
+                </div>
+                {% endfor %}
+            </section>
+
+            <section class="cc-card d-flex flex-column gap-3">
+                <div class="d-flex align-items-center">
+                    <h2 class="card-title-cc">Badges</h2>
+                    <span class="ms-auto text-muted-cc" style="font-size: 13px;">{{ badges | length }} of {{ badge_total }}</span>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    {% for b in badges %}
+                    <span class="cc-badge {{ b.tone }}" title="{{ b.name }}"><i class="bi {{ b.icon }}"></i></span>
+                    {% endfor %}
+                    {% for i in range(2) %}
+                    <span class="cc-badge locked" title="Locked"><i class="bi bi-lock"></i></span>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
 {% endblock %}
