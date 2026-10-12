@@ -1,0 +1,22 @@
+{# Top navigation bar. "active" (set in app.py) decides which link is highlighted. #}
+
+<nav class="cc-nav">
+    <a href="{{ url_for('home') }}" class="cc-brand">
+        <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="14.7" fill="var(--primary)" />
+            <path d="M16 5.3 L20 16 L12 16 Z" fill="var(--star)" />
+            <path d="M16 26.7 L20 16 L12 16 Z" fill="#fff" />
+        </svg>
+        CyberCompass
+    </a>
+    <ul class="nav gap-1">
+        <li class="nav-item"><a class="nav-link {% if active == 'home' %}active{% endif %}" href="{{ url_for('home') }}">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link {% if active == 'labs' %}active{% endif %}" href="#">Labs</a></li>
+        <li class="nav-item"><a class="nav-link {% if active == 'progress' %}active{% endif %}" href="#">My progress</a></li>
+    </ul>
+    <div class="ms-auto d-flex align-items-center gap-2">
+        <span class="cc-chip lg gold"><i class="bi bi-fire"></i> {{ user.streak_weeks }}-week streak</span>
+        <span class="cc-chip lg indigo"><i class="bi bi-lightning-charge"></i> {{ "{:,}".format(user.xp) }} XP</span>
+        <span class="cc-avatar ms-2">{{ user.initials }}</span>
+    </div>
+</nav>
