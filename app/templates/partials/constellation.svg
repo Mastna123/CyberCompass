@@ -1,0 +1,9 @@
+{# Decorative gold constellation for the Starlight hero card. Purely visual. #}
+
+<svg class="cc-constellation" viewBox="0 0 104 174" aria-hidden="true">
+	<polyline points="18,143 35,66 69,101 87,28" fill="none" stroke="#C7C4EE" stroke-opacity=".5" stroke-width="1.2" />
+	<path d="M18,136 Q19.4,142 26,143.5 Q19.4,145 18,151 Q16.6,145 10,143.5 Q16.6,142 18,136Z" fill="var(--star)" />
+	<path d="M35,59 Q36.4,65 43,66.5 Q36.4,68 35,74 Q33.6,68 27,66.5 Q33.6,65 35,59Z" fill="var(--star)" />
+	<path d="M69,94 Q70.4,100 77,101.5 Q70.4,103 69,109 Q67.6,103 61,101.5 Q67.6,100 69,94Z" fill="var(--star)" />
+	<circle cx="87" cy="28" r="4" fill="var(--hero-bg)" stroke="#C7C4EE" stroke-width="1.2" />
+</svg>

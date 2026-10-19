@@ -1,0 +1,521 @@
+﻿/* Uses only the variables from theme.css */
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--ink);
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+}
+
+a {
+    color: var(--primary-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+.text-muted-cc {
+    color: var(--muted);
+}
+
+.eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+/* Page layout */
+.page {
+    padding: 36px 56px;
+}
+
+.page-title {
+    font-size: 38px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.card-title-cc {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.home-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 880fr) minmax(0, 424fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.cc-two-up {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* Nav */
+.cc-nav {
+    height: 76px;
+    padding: 0 40px;
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.cc-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+    .cc-brand:hover, .cc-nav .nav-link:hover {
+        text-decoration: none;
+    }
+
+.cc-nav .nav-link {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted);
+    padding: 10px 16px;
+    border-radius: 999px;
+}
+
+    .cc-nav .nav-link.active {
+        background: var(--primary-tint);
+        color: var(--primary-dark);
+        font-weight: 600;
+    }
+
+.cc-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Cards */
+.cc-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+}
+
+/* Chips */
+.cc-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--neu);
+    color: var(--ink-2);
+    white-space: nowrap;
+}
+
+    .cc-chip.lg {
+        padding: 8px 14px;
+    }
+
+    .cc-chip.gold {
+        background: var(--warning-tint);
+        color: var(--warning-ink);
+    }
+
+    .cc-chip.indigo {
+        background: var(--primary-tint);
+        color: var(--primary-dark);
+    }
+
+/* Buttons */
+.btn-cc, .btn-cc-outline, .btn-cc-white {
+    height: 44px;
+    padding: 0 22px;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+    .btn-cc:hover, .btn-cc-outline:hover, .btn-cc-white:hover {
+        text-decoration: none;
+    }
+
+.btn-cc {
+    background: var(--primary);
+    color: var(--on-primary);
+    border: 0;
+}
+
+    .btn-cc:hover {
+        background: var(--primary-dark);
+        color: var(--on-primary);
+    }
+
+    .btn-cc.sm {
+        height: 40px;
+        padding: 0 18px;
+        font-size: 14px;
+    }
+
+.btn-cc-outline {
+    background: var(--card);
+    color: var(--ink);
+    border: 1.5px solid var(--line);
+}
+
+    .btn-cc-outline.lg {
+        height: 48px;
+    }
+
+.btn-cc-white {
+    height: 52px;
+    background: #fff;
+    color: var(--primary);
+    border: 0;
+}
+
+/* Progress bars */
+.cc-track {
+    height: 8px;
+    border-radius: 4px;
+    background: var(--neu);
+    overflow: hidden;
+}
+
+    .cc-track > span {
+        display: block;
+        height: 100%;
+        border-radius: 4px;
+    }
+
+/* Icon tiles */
+.cc-tile {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+    .cc-tile.lg {
+        width: 52px;
+        height: 52px;
+        border-radius: 15px;
+        font-size: 24px;
+    }
+
+    .cc-tile.check {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        font-size: 16px;
+        background: var(--success-tint);
+        color: var(--success-ink);
+    }
+
+/* List rows (Assigned, Recent results) */
+.list-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 0;
+}
+
+    .list-row.tight {
+        gap: 12px;
+        padding: 10px 0;
+    }
+
+.grow {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Midnight hero card with starfield */
+.cc-hero {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    padding: 28px;
+    border-radius: var(--radius);
+    color: var(--hero-ink);
+    background-color: var(--hero-bg);
+    background-image: radial-gradient(2px 2px at 8% 30%, rgba(255,255,255,.75), transparent), radial-gradient(1.5px 1.5px at 17% 92%, rgba(255,255,255,.6), transparent), radial-gradient(1.5px 1.5px at 44% 8%, rgba(255,255,255,.7), transparent), radial-gradient(1.5px 1.5px at 51% 12%, rgba(255,255,255,.55), transparent), radial-gradient(2px 2px at 62% 88%, rgba(255,255,255,.6), transparent), radial-gradient(1.5px 1.5px at 66% 14%, rgba(255,255,255,.55), transparent), radial-gradient(2px 2px at 76% 92%, rgba(255,255,255,.7), transparent), radial-gradient(1.5px 1.5px at 82% 24%, rgba(255,255,255,.7), transparent), radial-gradient(2px 2px at 88% 86%, rgba(255,255,255,.75), transparent), radial-gradient(1.5px 1.5px at 92% 70%, rgba(255,255,255,.55), transparent), radial-gradient(2px 2px at 96% 6%, rgba(255,255,255,.6), transparent), radial-gradient(1.5px 1.5px at 99% 42%, rgba(255,255,255,.65), transparent);
+}
+
+    .cc-hero > *:not(.cc-constellation) {
+        position: relative;
+        z-index: 1;
+    }
+
+    .cc-hero .eyebrow {
+        color: var(--hero-muted);
+    }
+
+.hero-tile {
+    width: 128px;
+    height: 128px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--danger-tint);
+    color: var(--danger-ink);
+    font-size: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.hero-meta {
+    color: var(--hero-muted);
+    font-size: 14px;
+}
+
+.cc-hero .cc-track {
+    width: 400px;
+    max-width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background: var(--hero-track);
+}
+
+    .cc-hero .cc-track > span {
+        background: var(--star);
+        border-radius: 5px;
+    }
+
+.cc-constellation {
+    position: absolute;
+    right: 158px;
+    top: 12px;
+    width: 104px;
+    height: 174px;
+    pointer-events: none;
+}
+
+/* Progress ring: set --p to a percent */
+.cc-ring {
+    --p: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: conic-gradient(var(--primary) calc(var(--p) * 1%), var(--neu) 0);
+    display: grid;
+    place-items: center;
+}
+
+    .cc-ring > div {
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        background: var(--card);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.1;
+    }
+
+    .cc-ring strong {
+        font-family: var(--font-heading);
+        font-size: 34px;
+        font-weight: 700;
+    }
+
+    .cc-ring small {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--muted);
+    }
+
+/* Badges */
+.cc-badge {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    border: 3px solid;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+    .cc-badge.green {
+        background: var(--success-tint);
+        border-color: var(--success);
+        color: var(--success-ink);
+    }
+
+    .cc-badge.coral {
+        background: var(--danger-tint);
+        border-color: var(--danger);
+        color: var(--danger-ink);
+    }
+
+    .cc-badge.teal {
+        background: var(--track-3-tint);
+        border-color: var(--track-3);
+        color: var(--track-3-ink);
+    }
+
+    .cc-badge.locked {
+        background: var(--neu);
+        border-color: var(--line);
+        color: var(--muted);
+        font-size: 18px;
+    }
+
+/* Keyboard focus is always visible */
+:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Tablets and phones */
+@media (max-width: 991px) {
+    .page {
+        padding: 24px 16px;
+    }
+
+    .home-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cc-nav {
+        padding: 0 16px;
+        gap: 12px;
+    }
+
+    .cc-constellation {
+        display: none;
+    }
+
+    .cc-hero {
+        flex-wrap: wrap;
+    }
+}
+
+
+/* ---------- Text styles ----------
+   Use these instead of style="font-size..." in templates. */
+.cc-subtitle {
+    font-size: 15px;
+    color: var(--muted);
+}
+/* line under a page title */
+.cc-meta {
+    font-size: 13px;
+    color: var(--muted);
+}
+/* small gray details: dates, "15 min" */
+.cc-label {
+    font-size: 14px;
+    font-weight: 500;
+}
+/* list labels, track names */
+.cc-item-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+/* a lab name in a list */
+.cc-stat {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+}
+/* "3 of 11 labs done" */
+
+/* ---------- Track colors ----------
+   Add class track-1 ... track-5 to a tile or bar and it picks up that track's colors. */
+.cc-tile.track-1 {
+    background: var(--track-1-tint);
+    color: var(--track-1-ink);
+}
+
+.cc-tile.track-2 {
+    background: var(--track-2-tint);
+    color: var(--track-2-ink);
+}
+
+.cc-tile.track-3 {
+    background: var(--track-3-tint);
+    color: var(--track-3-ink);
+}
+
+.cc-tile.track-4 {
+    background: var(--track-4-tint);
+    color: var(--track-4-ink);
+}
+
+.cc-tile.track-5 {
+    background: var(--track-5-tint);
+    color: var(--track-5-ink);
+}
+
+.cc-track > span.track-1 {
+    background: var(--track-1);
+}
+
+.cc-track > span.track-2 {
+    background: var(--track-2);
+}
+
+.cc-track > span.track-3 {
+    background: var(--track-3);
+}
+
+.cc-track > span.track-4 {
+    background: var(--track-4);
+}
+
+.cc-track > span.track-5 {
+    background: var(--track-5);
+}

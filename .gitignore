@@ -124,3 +124,14 @@ $RECYCLE.BIN/
 # Design exports (keep source files in Figma, not git)
 # ---------------------------------------------------------
 *.fig
+
+# ---------------------------------------------------------
+# Added when creating a virtual environment in the project 
+# root and to prevent committing local development 
+#files - project skeleton template
+# ---------------------------------------------------------
+.venv/
+__pycache__/
+*.db
+node_modules/
+.vs/
