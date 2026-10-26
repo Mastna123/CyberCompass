@@ -1,0 +1,93 @@
+{#
+  LAB OVERVIEW
+  One lab's intro page: the situation, how the lab works, and what you'll learn.
+  Data comes from lab_overview() in app.py. Lab text comes from lab_content.py (Justin).
+  TODO(Justin): review layout against your design
+#}
+{% extends "base.html" %}
+{% block title %}{{ lab.title }}{% endblock %}
+
+{% block content %}
+<nav class="cc-breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ url_for('library') }}">Labs</a> /
+    <a href="{{ url_for('library', track=track.id) }}">{{ track.name }}</a> /
+    <span>{{ lab.title }}</span>
+</nav>
+
+<div class="cc-main-side">
+    <div class="stack">
+
+        {# ---------- Hero ---------- #}
+        <section class="cc-hero">
+            {% include "partials/constellation.svg" %}
+            <div class="cc-tile hero-tile track-{{ track.n }}"><i class="bi {{ track.icon }}"></i></div>
+            <div class="d-flex flex-column gap-2">
+                <div class="eyebrow">{{ track.name }} · {{ lab.title }}</div>
+                {# Scenario title comes from lab_content.py (Justin) #}
+                <h1 class="hero-title">{{ lab.scenario_title }}</h1>
+                <div class="d-flex gap-2 flex-wrap">
+                    <span class="cc-chip"><i class="bi bi-clock"></i> {{ lab.minutes }} min</span>
+                    <span class="cc-chip">{{ lab.level }}</span>
+                    <span class="cc-chip gold"><i class="bi bi-lightning-charge"></i> +{{ lab.xp }} XP</span>
+                </div>
+            </div>
+        </section>
+
+        {# ---------- The situation (text from lab_content.py, Justin) ---------- #}
+        <section class="cc-card">
+            <h2 class="card-title-cc mb-2">The situation</h2>
+            <p class="m-0">{{ lab.situation }}</p>
+        </section>
+
+        {# ---------- How this lab works (steps from LAB_STEPS in lab_content.py, Justin) ---------- #}
+        <section class="cc-card">
+            <h2 class="card-title-cc mb-3">How this lab works</h2>
+            <div class="cc-steps">
+                {% for step in steps %}
+                <div class="cc-step {% if loop.first %}current{% endif %}">
+                    <div class="cc-step-num">{{ loop.index }}</div>
+                    <div class="cc-item-title">{{ step.title }}</div>
+                    <div class="cc-meta">{{ step.summary }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        {# ---------- Learning outcomes (from lab_content.py, Justin) ---------- #}
+        <section class="cc-card">
+            <h2 class="card-title-cc mb-2">You'll walk away able to</h2>
+            {% for outcome in lab.outcomes %}
+            <div class="list-row tight">
+                <span class="cc-tile check"><i class="bi bi-check-lg"></i></span>
+                <span class="cc-label">{{ outcome }}</span>
+            </div>
+            {% endfor %}
+        </section>
+    </div>
+
+    {# ---------- Side panel ---------- #}
+    <aside class="cc-card d-flex flex-column gap-3">
+        {# TODO(Luke): replace with a real preview of the lab environment #}
+        <div class="cc-preview">Preview of the practice environment<br>(coming soon)</div>
+
+        <a href="{{ url_for('lab_play', lab_id=lab.id) }}" class="btn-cc lg w-100">Start lab <i class="bi bi-arrow-right"></i></a>
+
+        <dl class="cc-details">
+            <dt>Reward</dt>
+            <dd>+{{ lab.xp }} XP</dd>
+            <dt>Counts toward</dt>
+            <dd>{{ track.name }}</dd>
+            <dt>Assigned by</dt>
+            <dd>{{ "[Training lead]" if lab.assigned else "Not assigned" }}</dd>
+            <dt>Works best on</dt>
+            <dd>Laptop or desktop</dd>
+        </dl>
+
+        {# TODO(Justin): wording  ·  TODO(Derrick): confirm it's accurate #}
+        <div class="cc-note">
+            <i class="bi bi-shield-check"></i>
+            <span>Safe practice world. Nothing you do here touches your real email, files, or devices.</span>
+        </div>
+    </aside>
+</div>
+{% endblock %}

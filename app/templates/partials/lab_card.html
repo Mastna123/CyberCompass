@@ -1,0 +1,14 @@
+{# One lab as a card (used on the Lab library page). Expects "lab" to be set. #}
+{% set track = get_track(lab.track) %}
+<a class="cc-card cc-lab-card" href="{{ url_for('lab_overview', lab_id=lab.id) }}">
+    <div class="d-flex align-items-start">
+        <span class="cc-tile track-{{ track.n }}"><i class="bi {{ track.icon }}"></i></span>
+        {% if lab.assigned %}<span class="cc-chip indigo ms-auto">Assigned</span>{% endif %}
+    </div>
+    <div class="eyebrow track-text-{{ track.n }} mt-3">{{ track.name }}</div>
+    <h3 class="card-title-cc mt-1 mb-3">{{ lab.title }}</h3>
+    <div class="d-flex align-items-center mt-auto">
+        <span class="cc-meta">{{ lab.minutes }} min · +{{ lab.xp }} XP</span>
+        <span class="cc-chip status-{{ lab.status }} ms-auto">{{ status_labels[lab.status] }}</span>
+    </div>
+</a>
