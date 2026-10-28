@@ -81,7 +81,7 @@
                 <h2 class="card-title-cc">Assigned to you</h2>
                 <span class="cc-meta ms-auto">From your training lead</span>
             </div>
-            {% for lab in other_assigned %}
+            {% for lab in assigned_labs %}
             {% set track = get_track(lab.track) %}
             <div class="list-row">
                 <span class="cc-tile track-{{ track.n }}"><i class="bi {{ track.icon }}"></i></span>

@@ -28,6 +28,8 @@
                 <div class="d-flex gap-2 flex-wrap">
                     <span class="cc-chip"><i class="bi bi-clock"></i> {{ lab.minutes }} min</span>
                     <span class="cc-chip">{{ lab.level }}</span>
+                    {# Who the lab is for (role_groups in data.py) #}
+                    <span class="cc-chip"><i class="bi bi-people"></i> {{ lab.role_groups | join(", ") }}</span>
                     <span class="cc-chip gold"><i class="bi bi-lightning-charge"></i> +{{ lab.xp }} XP</span>
                 </div>
             </div>

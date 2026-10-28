@@ -16,20 +16,19 @@ TRACKS = [
     {"id": "emerging", "name": "Emerging risk",             "icon": "bi-stars",    "n": 5},
 ]
 
-# One entry per lab. status can be "new", "in_progress", or "done".
-# minutes / xp / due dates are placeholders until the team decides them.
+# One entry per lab: the 8 core labs from the lab catalog.
+# status can be "new", "in_progress", or "done".
+# role_groups: who the lab is for. "Everyone" means every role group takes it.
+# minutes / xp / due dates / statuses are placeholders until the team decides them.
 LABS = [
-    {"id": 1, "title": "Password security", "track": "identity", "minutes": 15, "xp": 150, "status": "done", "assigned": False, "completed": "Sep 18"},
-    {"id": 2, "title": "Multifactor authentication", "track": "identity", "minutes": 15, "xp": 150, "status": "new", "assigned": True, "due": "Friday"},
-    {"id": 3, "title": "Account recovery", "track": "identity", "minutes": 15, "xp": 150, "status": "new", "assigned": False},
-    {"id": 4, "title": "File permissions", "track": "data", "minutes": 15, "xp": 150, "status": "new", "assigned": False},
-    {"id": 5, "title": "Secure file sharing", "track": "data", "minutes": 15, "xp": 150, "status": "new", "assigned": True, "due": "Oct 10"},
-    {"id": 6, "title": "Backups", "track": "data", "minutes": 15, "xp": 150, "status": "new", "assigned": False},
-    {"id": 7, "title": "Wi-Fi security", "track": "network", "minutes": 15, "xp": 150, "status": "new", "assigned": False},
-    {"id": 8, "title": "Software updates", "track": "network", "minutes": 15, "xp": 150, "status": "done", "assigned": False, "completed": "Sep 11"},
-    {"id": 9, "title": "Phishing", "track": "social", "minutes": 15, "xp": 150, "status": "in_progress", "assigned": False, "step": 2, "time_left": "about 8 min left"},
-    {"id": 10, "title": "Safe downloads", "track": "social", "minutes": 15, "xp": 150, "status": "new", "assigned": False},
-    {"id": 11, "title": "Safe AI usage", "track": "emerging", "minutes": 15, "xp": 150, "status": "new", "assigned": True, "due": "Oct 17"},
+    {"id": 1, "title": "Phishing email", "track": "social", "role_groups": ["Everyone"], "minutes": 15, "xp": 150, "status": "in_progress", "assigned": False, "step": 2, "time_left": "about 8 min left"},
+    {"id": 2, "title": "Password reuse", "track": "identity", "role_groups": ["Everyone"], "minutes": 15, "xp": 150, "status": "done", "assigned": False, "completed": "Sep 18"},
+    {"id": 3, "title": "MFA push fatigue", "track": "identity", "role_groups": ["Everyone"], "minutes": 15, "xp": 150, "status": "new", "assigned": True, "due": "Friday"},
+    {"id": 4, "title": "Software updates", "track": "network", "role_groups": ["Everyone"], "minutes": 15, "xp": 150, "status": "done", "assigned": False, "completed": "Sep 11"},
+    {"id": 5, "title": "Secure file sharing", "track": "data", "role_groups": ["Everyone"], "minutes": 15, "xp": 150, "status": "new", "assigned": True, "due": "Oct 30"},
+    {"id": 6, "title": "Payment change fraud", "track": "social", "role_groups": ["Leadership", "Office staff"], "minutes": 15, "xp": 150, "status": "new", "assigned": True, "due": "Nov 6"},
+    {"id": 7, "title": "Executive impersonation", "track": "social", "role_groups": ["Office staff", "Management", "Frontline staff"], "minutes": 15, "xp": 150, "status": "new", "assigned": False},
+    {"id": 8, "title": "Responding to a report", "track": "social", "role_groups": ["Leadership", "Management"], "minutes": 15, "xp": 150, "status": "new", "assigned": False},
 ]
 
 # TODO(Isabella): comes from the logged-in user once accounts are built

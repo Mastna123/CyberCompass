@@ -34,7 +34,7 @@ def home():
         resume_lab=in_progress_lab,                       # big midnight card at the top
         resume_percent=round(in_progress_lab["step"] / 4 * 100) if in_progress_lab else 0,
         next_due=assigned_labs[0] if assigned_labs else None,
-        other_assigned=assigned_labs[1:],                 # everything after the first
+        assigned_labs=assigned_labs,                      # full list, including next_due
         done_count=len(finished_labs),
         total_count=len(data.LABS),
         done_percent=round(len(finished_labs) / len(data.LABS) * 100),
