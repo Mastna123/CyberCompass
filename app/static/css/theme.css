@@ -1,13 +1,12 @@
-﻿/*
-  THEME TOKENS
-  Change only this file (and the font link in base.html) to switch themes.
-  As of 10/9/26, the current theme chosen was: Option I, Starlight
+/*
+  theme tokens: option i, starlight (values from the figma export)
+  change only this file + the font link in base.html to switch themes.
 */
 :root {
     --font-heading: "Sora", system-ui, sans-serif;
     --font-body: "Figtree", system-ui, sans-serif;
 
-    /* Page and text */
+    /* page and text */
     --bg: #F6F5FC;
     --card: #FFFFFF;
     --ink: #1C1A3D;
@@ -16,14 +15,14 @@
     --line: #E3E1F2;
     --neu: #ECEAF7; /* empty progress bars, gray chips */
 
-    /* Brand */
+    /* brand */
     --primary: #4338CA;
     --primary-dark: #3730A3;
     --primary-tint: #E8E7FB;
     --on-primary: #FFFFFF;
     --accent: #7C5CD6; /* avatar */
 
-    /* Status: base color, light background, readable text */
+    /* status: base color, light background, readable text */
     --success: #16A34A;
     --success-tint: #DCF5E4;
     --success-ink: #166534;
@@ -34,31 +33,31 @@
     --warning-tint: #FDF2CF;
     --warning-ink: #7A5400;
 
-    /* Midnight feature card */
+    /* midnight feature card */
     --hero-bg: #1E1B4B;
     --hero-ink: #FFFFFF;
     --hero-muted: #C7C4EE;
     --hero-track: #37347A;
     --star: #F2B416;
 
-    /* Tracks: bar color, tile background, tile icon */
+    /* tracks: bar color, tile background, tile icon */
     --track-1: #4338CA;
     --track-1-tint: #E8E7FB;
-    --track-1-ink: #3730A3; /* Identity and access */
+    --track-1-ink: #3730A3; /* identity and access */
     --track-2: #7C5CD6;
     --track-2-tint: #EFE9FC;
-    --track-2-ink: #5B3DB5; /* Data handling and sharing */
+    --track-2-ink: #5B3DB5; /* data handling and sharing */
     --track-3: #155E75;
     --track-3-tint: #DDF1F6;
-    --track-3-ink: #155E75; /* Network and device */
+    --track-3-ink: #155E75; /* network and device */
     --track-4: #E0533D;
     --track-4-tint: #FCE5E0;
-    --track-4-ink: #A3321F; /* Social engineering */
+    --track-4-ink: #A3321F; /* social engineering */
     --track-5: #F2B416;
     --track-5-tint: #FDF2CF;
-    --track-5-ink: #7A5400; /* Emerging risk */
+    --track-5-ink: #7A5400; /* emerging risk */
 
-    /* Shape */
+    /* shape */
     --radius: 16px;
     --radius-sm: 10px;
     --shadow: 0 4px 16px rgba(67, 56, 202, 0.07);
