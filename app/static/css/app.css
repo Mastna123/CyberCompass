@@ -1,4 +1,4 @@
-﻿/* Uses only the variables from theme.css */
+/* uses only the variables from theme.css. sizes match the figma export. */
 
 body {
     font-family: var(--font-body);
@@ -32,7 +32,7 @@ a {
     color: var(--muted);
 }
 
-/* Page layout */
+/* page layout */
 .page {
     padding: 36px 56px;
 }
@@ -69,7 +69,7 @@ a {
     gap: 24px;
 }
 
-/* Nav */
+/* nav */
 .cc-nav {
     height: 76px;
     padding: 0 40px;
@@ -121,7 +121,7 @@ a {
     justify-content: center;
 }
 
-/* Cards */
+/* cards */
 .cc-card {
     background: var(--card);
     border: 1px solid var(--line);
@@ -130,7 +130,7 @@ a {
     padding: 24px;
 }
 
-/* Chips */
+/* chips */
 .cc-chip {
     display: inline-flex;
     align-items: center;
@@ -158,7 +158,7 @@ a {
         color: var(--primary-dark);
     }
 
-/* Buttons */
+/* buttons */
 .btn-cc, .btn-cc-outline, .btn-cc-white {
     height: 44px;
     padding: 0 22px;
@@ -210,7 +210,7 @@ a {
     border: 0;
 }
 
-/* Progress bars */
+/* progress bars */
 .cc-track {
     height: 8px;
     border-radius: 4px;
@@ -224,7 +224,7 @@ a {
         border-radius: 4px;
     }
 
-/* Icon tiles */
+/* icon tiles */
 .cc-tile {
     width: 48px;
     height: 48px;
@@ -252,7 +252,7 @@ a {
         color: var(--success-ink);
     }
 
-/* List rows (Assigned, Recent results) */
+/* list rows (assigned, recent results) */
 .list-row {
     display: flex;
     align-items: center;
@@ -270,7 +270,7 @@ a {
     min-width: 0;
 }
 
-/* Midnight hero card with starfield */
+/* midnight hero card with starfield */
 .cc-hero {
     position: relative;
     overflow: hidden;
@@ -340,7 +340,7 @@ a {
     pointer-events: none;
 }
 
-/* Progress ring: set --p to a percent */
+/* progress ring: set --p to a percent */
 .cc-ring {
     --p: 0;
     width: 120px;
@@ -376,7 +376,7 @@ a {
         color: var(--muted);
     }
 
-/* Badges */
+/* badges */
 .cc-badge {
     width: 62px;
     height: 62px;
@@ -413,13 +413,13 @@ a {
         font-size: 18px;
     }
 
-/* Keyboard focus is always visible */
+/* keyboard focus is always visible */
 :focus-visible {
     outline: 3px solid var(--primary);
     outline-offset: 2px;
 }
 
-/* Tablets and phones */
+/* tablets and phones */
 @media (max-width: 991px) {
     .page {
         padding: 24px 16px;
@@ -443,9 +443,8 @@ a {
     }
 }
 
-
-/* ---------- Text styles ----------
-   Use these instead of style="font-size..." in templates. */
+/* ---------- text styles ----------
+   use these instead of style="font-size..." in templates. */
 .cc-subtitle {
     font-size: 15px;
     color: var(--muted);
@@ -473,8 +472,8 @@ a {
 }
 /* "3 of 11 labs done" */
 
-/* ---------- Track colors ----------
-   Add class track-1 ... track-5 to a tile or bar and it picks up that track's colors. */
+/* ---------- track colors ----------
+   add class track-1 ... track-5 to a tile or bar and it picks up that track's colors. */
 .cc-tile.track-1 {
     background: var(--track-1-tint);
     color: var(--track-1-ink);
@@ -518,4 +517,386 @@ a {
 
 .cc-track > span.track-5 {
     background: var(--track-5);
+}
+
+/* ==========================================================
+   everything below was added for the lab pages
+   ========================================================== */
+
+/* hidden things stay hidden, even if another class tries to show them */
+[hidden] {
+    display: none !important;
+}
+
+/* ---------- shared two-column layout (main + side) ---------- */
+.cc-main-side {
+    display: grid;
+    grid-template-columns: minmax(0, 880fr) minmax(0, 424fr);
+    gap: 24px;
+    align-items: start;
+}
+
+/* more button sizes */
+.btn-cc.lg {
+    height: 52px;
+}
+
+.btn-cc-outline.sm {
+    height: 40px;
+    padding: 0 14px;
+    font-size: 14px;
+}
+
+.btn-cc:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+/* track colors for small dots and colored text */
+.cc-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+    .cc-dot.track-1 {
+        background: var(--track-1);
+    }
+
+    .cc-dot.track-2 {
+        background: var(--track-2);
+    }
+
+    .cc-dot.track-3 {
+        background: var(--track-3);
+    }
+
+    .cc-dot.track-4 {
+        background: var(--track-4);
+    }
+
+    .cc-dot.track-5 {
+        background: var(--track-5);
+    }
+
+.track-text-1 {
+    color: var(--track-1-ink);
+}
+
+.track-text-2 {
+    color: var(--track-2-ink);
+}
+
+.track-text-3 {
+    color: var(--track-3-ink);
+}
+
+.track-text-4 {
+    color: var(--track-4-ink);
+}
+
+.track-text-5 {
+    color: var(--track-5-ink);
+}
+
+/* status chips on lab cards */
+.cc-chip.status-done {
+    background: var(--success-tint);
+    color: var(--success-ink);
+}
+
+.cc-chip.status-in_progress {
+    background: var(--primary-tint);
+    color: var(--primary-dark);
+}
+
+/* ---------- lab library ---------- */
+.cc-library {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.cc-sidebar-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.cc-filter-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+}
+
+    .cc-filter-link:hover {
+        background: var(--bg);
+        text-decoration: none;
+    }
+
+    .cc-filter-link.active {
+        background: var(--primary-tint);
+        color: var(--primary-dark);
+        font-weight: 600;
+    }
+
+.cc-lab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.cc-lab-card {
+    display: flex;
+    flex-direction: column;
+    color: var(--ink);
+    font-weight: 400;
+    transition: transform .15s, box-shadow .15s;
+}
+
+    .cc-lab-card:hover {
+        color: var(--ink);
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(67, 56, 202, .12);
+    }
+
+/* ---------- lab overview ---------- */
+.cc-breadcrumb {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+    .cc-breadcrumb a {
+        font-weight: 500;
+    }
+
+.cc-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.cc-step-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.cc-step.current .cc-step-num {
+    background: var(--primary);
+    color: var(--on-primary);
+}
+
+.cc-preview {
+    min-height: 160px;
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    background: var(--hero-bg);
+    color: var(--hero-muted);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.cc-details {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 16px;
+    margin: 0;
+    font-size: 14px;
+}
+
+    .cc-details dt {
+        color: var(--muted);
+        font-weight: 400;
+    }
+
+    .cc-details dd {
+        margin: 0;
+        text-align: right;
+        font-weight: 600;
+    }
+
+.cc-note {
+    display: flex;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--success-tint);
+    color: var(--success-ink);
+    font-size: 13px;
+}
+
+/* ---------- lab player ---------- */
+.cc-player-header {
+    height: 76px;
+    padding: 0 40px;
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.cc-stepper {
+    display: flex;
+    gap: 20px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+}
+
+    .cc-stepper li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--muted);
+    }
+
+        .cc-stepper li.current {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .cc-stepper li.done {
+            color: var(--success-ink);
+        }
+
+.cc-step-num.sm {
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    font-size: 13px;
+}
+
+.cc-stepper li.current .cc-step-num {
+    background: var(--primary);
+    color: var(--on-primary);
+}
+
+.cc-stepper li.done .cc-step-num {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+}
+
+.cc-stage {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+}
+
+.cc-stage-title {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 700;
+    margin: 6px 0 12px;
+}
+
+.cc-desk {
+    min-height: 300px;
+    margin-bottom: 20px;
+    padding: 24px;
+    border-radius: var(--radius-sm);
+    background: var(--hero-bg);
+    color: var(--hero-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.cc-hint {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--warning-tint);
+    color: var(--warning-ink);
+}
+
+.cc-choices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.cc-choice {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    text-align: left;
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+    .cc-choice:hover {
+        border-color: var(--primary);
+    }
+
+    .cc-choice[aria-pressed="true"] {
+        border-color: var(--primary);
+        background: var(--primary-tint);
+    }
+
+.cc-choice-key {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--neu);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cc-choice[aria-pressed="true"] .cc-choice-key {
+    background: var(--primary);
+    color: var(--on-primary);
+}
+
+/* tablets and phones (lab pages) */
+@media (max-width: 991px) {
+    .cc-library, .cc-main-side {
+        grid-template-columns: 1fr;
+    }
+
+    .cc-steps {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .cc-player-header {
+        padding: 0 16px;
+        gap: 12px;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 76px;
+    }
 }

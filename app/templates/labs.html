@@ -1,0 +1,55 @@
+{#
+  LAB LIBRARY
+  Every lab as a card, with track and status filters on the left.
+  Data comes from library() in app.py. Filters are plain links (?track=...&status=...).
+  TODO(Justin): review layout against your design
+#}
+{% extends "base.html" %}
+{% block title %}Lab library{% endblock %}
+
+{% block content %}
+<div class="cc-library">
+
+    {# ---------- Filters ---------- #}
+    <aside class="cc-card d-flex flex-column gap-4">
+        <h1 class="cc-sidebar-title">Lab library</h1>
+
+        <div>
+            <div class="eyebrow mb-2">Track</div>
+            <a class="cc-filter-link {% if not selected_track %}active{% endif %}"
+               href="{{ url_for('library', status=selected_status) }}">All tracks</a>
+            {% for track in tracks %}
+            <a class="cc-filter-link {% if selected_track == track.id %}active{% endif %}"
+               href="{{ url_for('library', track=track.id, status=selected_status) }}">
+                <span class="cc-dot track-{{ track.n }}"></span>{{ track.name }}
+            </a>
+            {% endfor %}
+        </div>
+
+        <div>
+            <div class="eyebrow mb-2">Status</div>
+            <a class="cc-filter-link {% if not selected_status %}active{% endif %}"
+               href="{{ url_for('library', track=selected_track) }}">Any status</a>
+            {% for status, label in status_labels.items() %}
+            <a class="cc-filter-link {% if selected_status == status %}active{% endif %}"
+               href="{{ url_for('library', track=selected_track, status=status) }}">{{ label }}</a>
+            {% endfor %}
+        </div>
+    </aside>
+
+    {# ---------- Lab cards ---------- #}
+    <section class="stack">
+        <div class="d-flex align-items-center">
+            <h2 class="card-title-cc">{{ labs | length }} lab{{ "s" if labs | length != 1 }}</h2>
+            <span class="cc-meta ms-auto">Assigned labs first</span>
+        </div>
+        <div class="cc-lab-grid">
+            {% for lab in labs %}
+            {% include "partials/lab_card.html" %}
+            {% else %}
+            <p class="cc-meta">No labs match these filters.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

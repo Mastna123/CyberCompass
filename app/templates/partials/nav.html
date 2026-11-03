@@ -11,7 +11,8 @@
     </a>
     <ul class="nav gap-1">
         <li class="nav-item"><a class="nav-link {% if active == 'home' %}active{% endif %}" href="{{ url_for('home') }}">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link {% if active == 'labs' %}active{% endif %}" href="#">Labs</a></li>
+        <li class="nav-item"><a class="nav-link {% if active == 'labs' %}active{% endif %}" href="{{ url_for('library') }}">Labs</a></li>
+        {# TODO(Isabella): link to My progress page once it's built #}
         <li class="nav-item"><a class="nav-link {% if active == 'progress' %}active{% endif %}" href="#">My progress</a></li>
     </ul>
     <div class="ms-auto d-flex align-items-center gap-2">

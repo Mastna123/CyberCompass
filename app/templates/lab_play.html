@@ -1,0 +1,102 @@
+{#
+  LAB PLAYER
+  One page that walks through the four steps. lab_player.js shows one stage at a time
+  and sends each try to Flask (record_attempt in app.py).
+  All learner-facing text comes from lab_content.py (Justin).
+#}
+{% extends "base.html" %}
+{% block title %}{{ lab.title }}{% endblock %}
+
+{% block body %}
+{# ---------- Focused header (no main nav during a lab) ---------- #}
+<header class="cc-player-header">
+    <a href="{{ url_for('lab_overview', lab_id=lab.id) }}" class="btn-cc-outline sm" aria-label="Exit lab"><i class="bi bi-x-lg"></i></a>
+    <span class="cc-item-title">{{ lab.scenario_title }}</span>
+
+    <ol class="cc-stepper">
+        {% for step in steps %}
+        <li data-step="{{ loop.index }}"><span class="cc-step-num sm">{{ loop.index }}</span>{{ step.title }}</li>
+        {% endfor %}
+    </ol>
+
+    <button type="button" class="btn-cc-outline sm" id="hint-button">Need a hint?</button>
+    {# TODO(Luke): this should reset the practice environment #}
+    <button type="button" class="btn-cc-outline sm" aria-label="Reset the practice environment" disabled>
+        <i class="bi bi-arrow-counterclockwise"></i>
+    </button>
+</header>
+
+{# TODO(Isabella): change data-finish-url to the results page in Step 7 #}
+<main class="page stack" id="lab-player"
+      data-attempt-url="{{ url_for('record_attempt', lab_id=lab.id) }}"
+      data-finish-url="{{ url_for('lab_overview', lab_id=lab.id) }}">
+
+    <div class="cc-hint" id="hint-box" hidden><strong>Hint:</strong> {{ lab.hint }}</div>
+
+    {# ---------- Step 1: Learn ---------- #}
+    <section class="cc-card cc-stage" data-stage="learn" data-step="1">
+        <div class="eyebrow">Learn</div>
+        <h1 class="cc-stage-title">{{ lab.title }}</h1>
+        <p>{{ lab.learn }}</p>
+        <button type="button" class="btn-cc" data-next="decide">Got it <i class="bi bi-arrow-right"></i></button>
+    </section>
+
+    {# ---------- Step 2: Make the call ---------- #}
+    <section class="cc-card cc-stage" data-stage="decide" data-step="2" hidden>
+        {# TODO(Luke): the Guacamole practice desktop goes here #}
+        <div class="cc-desk">Practice desktop will appear here</div>
+        <div class="eyebrow">Make the call</div>
+        <h2 class="cc-stage-title">{{ lab.prompt }}</h2>
+        <div class="cc-choices" data-group="first">
+            {% for choice in lab.choices %}
+            <button type="button" class="cc-choice" data-choice="{{ choice.key }}" aria-pressed="false">
+                <span class="cc-choice-key">{{ choice.key }}</span>{{ choice.label }}
+            </button>
+            {% endfor %}
+        </div>
+        <button type="button" class="btn-cc" data-lock="first" disabled>Lock it in</button>
+    </section>
+
+    {# ---------- What happened (still step 2) ---------- #}
+    <section class="cc-card cc-stage" data-stage="result" data-step="2" hidden>
+        <div id="result-safe" hidden>
+            <div class="eyebrow">Nice catch</div>
+            <p>{{ lab.result_safe }}</p>
+        </div>
+        <div id="result-unsafe" hidden>
+            <div class="eyebrow">Here's what happened</div>
+            <p>{{ lab.result_unsafe }}</p>
+        </div>
+        <button type="button" class="btn-cc" data-next="control">Show me the safe way</button>
+    </section>
+
+    {# ---------- Step 3: Apply the control ---------- #}
+    <section class="cc-card cc-stage" data-stage="control" data-step="3" hidden>
+        <div class="eyebrow">Apply the control</div>
+        <ol class="mb-4">
+            {% for step in lab.control_steps %}
+            <li>{{ step }}</li>
+            {% endfor %}
+        </ol>
+        <button type="button" class="btn-cc" data-next="retry">Try it again</button>
+    </section>
+
+    {# ---------- Step 4: Try it again ---------- #}
+    <section class="cc-card cc-stage" data-stage="retry" data-step="4" hidden>
+        <div class="eyebrow">Try it again</div>
+        <h2 class="cc-stage-title">{{ lab.retry_prompt }}</h2>
+        <div class="cc-choices" data-group="second">
+            {% for choice in lab.choices %}
+            <button type="button" class="cc-choice" data-choice="{{ choice.key }}" aria-pressed="false">
+                <span class="cc-choice-key">{{ choice.key }}</span>{{ choice.label }}
+            </button>
+            {% endfor %}
+        </div>
+        <button type="button" class="btn-cc" data-lock="second" disabled>Lock it in</button>
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/lab_player.js') }}"></script>
+{% endblock %}
