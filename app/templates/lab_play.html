@@ -29,6 +29,8 @@
 {# TODO(Isabella): change data-finish-url to the results page in Step 7 #}
 <main class="page stack" id="lab-player"
       data-attempt-url="{{ url_for('record_attempt', lab_id=lab.id) }}"
+      data-progress-url="{{ url_for('record_progress', lab_id=lab.id) }}"
+      data-start-stage="{{ start_stage }}"
       data-finish-url="{{ url_for('lab_overview', lab_id=lab.id) }}">
 
     <div class="cc-hint" id="hint-box" hidden><strong>Hint:</strong> {{ lab.hint }}</div>
@@ -59,11 +61,12 @@
 
     {# ---------- What happened (still step 2) ---------- #}
     <section class="cc-card cc-stage" data-stage="result" data-step="2" hidden>
-        <div id="result-safe" hidden>
+        {# On resume, show the message for the learner's saved first try #}
+        <div id="result-safe" {% if first_try_safe is not true %}hidden{% endif %}>
             <div class="eyebrow">Nice catch</div>
             <p>{{ lab.result_safe }}</p>
         </div>
-        <div id="result-unsafe" hidden>
+        <div id="result-unsafe" {% if first_try_safe is not false %}hidden{% endif %}>
             <div class="eyebrow">Here's what happened</div>
             <p>{{ lab.result_unsafe }}</p>
         </div>
@@ -85,10 +88,11 @@
     <section class="cc-card cc-stage" data-stage="retry" data-step="4" hidden>
         <div class="eyebrow">Try it again</div>
         <h2 class="cc-stage-title">{{ lab.retry_prompt }}</h2>
+        {# Shuffled and re-lettered in Flask; data-choice keeps the real key for scoring #}
         <div class="cc-choices" data-group="second">
-            {% for choice in lab.choices %}
+            {% for choice in retry_choices %}
             <button type="button" class="cc-choice" data-choice="{{ choice.key }}" aria-pressed="false">
-                <span class="cc-choice-key">{{ choice.key }}</span>{{ choice.label }}
+                <span class="cc-choice-key">{{ choice.letter }}</span>{{ choice.label }}
             </button>
             {% endfor %}
         </div>
