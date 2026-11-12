@@ -13,7 +13,7 @@
 <div class="d-flex align-items-end">
     <div>
         <h1 class="page-title">Welcome back, {{ user.first_name }}</h1>
-        <div class="cc-subtitle mt-1">Role group: {{ user.role_group }} · {{ user.org }}</div>
+        <div class="cc-subtitle mt-1">{{ role_label }} · {{ user.role_group }} · {{ user.org }}</div>
     </div>
     <a href="{{ url_for('library') }}" class="btn-cc-outline lg ms-auto">Browse all labs <i class="bi bi-arrow-right"></i></a>
 </div>
@@ -31,7 +31,7 @@
                 <div class="eyebrow">Pick up where you left off</div>
                 {# Scenario title comes from lab_content.py (Justin) #}
                 <h2 class="hero-title">{{ resume_lab.scenario_title }}</h2>
-                <div class="hero-meta">{{ resume_lab.title }} · Step {{ resume_lab.step }} of 4 · {{ resume_lab.time_left }}</div>
+                <div class="hero-meta">{{ resume_lab.title }} · Step {{ resume_lab.step }} of 4{% if resume_lab.time_left %} · {{ resume_lab.time_left }}{% endif %}</div>
                 <div class="cc-track"><span style="width: {{ resume_percent }}%;"></span></div>
             </div>
             <a href="{{ url_for('lab_play', lab_id=resume_lab.id) }}" class="btn-cc-white">Resume <i class="bi bi-arrow-right"></i></a>
@@ -107,9 +107,15 @@
             <div>
                 <div class="d-flex mb-1">
                     <span class="cc-label">{{ track.name }}</span>
+                    {% if track.total %}
                     <span class="cc-meta ms-auto">{{ track.done }}/{{ track.total }}</span>
+                    {% else %}
+                    <span class="cc-meta ms-auto">Coming soon</span>
+                    {% endif %}
                 </div>
+                {% if track.total %}
                 <div class="cc-track"><span class="track-{{ track.n }}" style="width: {{ track.percent }}%;"></span></div>
+                {% endif %}
             </div>
             {% endfor %}
         </section>

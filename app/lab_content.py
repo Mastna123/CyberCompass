@@ -15,6 +15,7 @@ Questions about how this file is used: ask Isabella.
 # ---------------------------------------------------------------------------
 # The four steps every lab follows (shown on each lab's overview page).
 # ---------------------------------------------------------------------------
+# TODO(Justin): review step wording
 LAB_STEPS = [
     {"title": "Learn", "summary": "Pick up one quick idea you'll use in this lab."},
     {"title": "Make the call", "summary": "Decide what you'd do, then see what happens."},
@@ -54,6 +55,9 @@ PLACEHOLDER = {
 
     # Step 4: Try it again
     "retry_prompt": "[A new version of the same situation]",
+    # Optional: a lab can have its own "retry_choices" for Try it again.
+    # Same layout as "choices" above, with exactly one marked "safe": True.
+    # Leave it out and Try it again reuses the choices above in a new order.
 
     # Shown when the learner clicks "Need a hint?"
     "hint": "[A short hint that points them in the right direction]",
@@ -64,6 +68,7 @@ PLACEHOLDER = {
 # Situation, prompt, and choices come from the lab catalog (Encounter / Unsafe / Safe).
 # Everything in [square brackets] is still a placeholder.
 # TODO(Justin): fill in the bracketed text for each lab.
+# A lab can also have its own "retry_choices" for Try it again (see PLACEHOLDER above).
 # ---------------------------------------------------------------------------
 LAB_CONTENT = {
     1: {  # Phishing email
