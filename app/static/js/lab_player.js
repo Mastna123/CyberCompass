@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const stages = player.querySelectorAll(".cc-stage");
     const stepperItems = document.querySelectorAll(".cc-stepper li");
+    const hintBox = document.getElementById("hint-box");
+    const hintButton = document.getElementById("hint-button");
     let hintsUsed = 0;
     let stageStartedAt = Date.now();
 
@@ -35,6 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
             item.classList.toggle("done", step < currentStep);
             item.classList.toggle("current", step === currentStep);
         });
+        // The hint is only for the steps where they make a choice, and it closes when they move on
+        hintBox.hidden = true;
+        hintButton.disabled = !(name === "decide" || name === "retry");
         stageStartedAt = Date.now();   // used for "time to correct"
         window.scrollTo(0, 0);
         if (save) saveProgress(name);
@@ -120,9 +125,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Hint button: show the hint and count it ("hint requests" is one of our measurements)
-    document.getElementById("hint-button").addEventListener("click", () => {
+    hintButton.addEventListener("click", () => {
         hintsUsed += 1;
-        document.getElementById("hint-box").hidden = false;
+        hintBox.hidden = false;
+    });
+
+    // Start over: clear their picks and go back to Learn.
+    // Their earlier tries stay saved, since those count toward their results.
+    document.getElementById("restart-button").addEventListener("click", () => {
+        if (!confirm("Start this lab over from the beginning?")) return;
+        player.querySelectorAll(".cc-choice").forEach((c) => c.setAttribute("aria-pressed", "false"));
+        player.querySelectorAll("[data-lock]").forEach((button) => (button.disabled = true));
+        player.querySelectorAll(".cc-feedback").forEach((banner) => (banner.hidden = true));
+        hintsUsed = 0;
+        showStage("learn");   // this also saves "learn", so Resume starts from the beginning too
     });
 
     // Open where the learner left off (Flask sends "learn" if they haven't started)
