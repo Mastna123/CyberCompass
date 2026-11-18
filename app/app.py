@@ -95,12 +95,15 @@ def lab_play(lab_id):
     lab = data.get_lab(lab_id)
     if lab is None:
         abort(404)
+    saved_first_try = data.first_try(lab_id)
+    first_try_result = data.result_for(lab, 1, saved_first_try["choice"]) if saved_first_try else ""
     return render_template(
         "lab_play.html",
         lab=lab,
         steps=lab_content.LAB_STEPS,
         start_stage=lab["stage"],                         # where Resume picks up
         first_try_safe=data.first_try_safe(lab_id),       # for "What happened" on resume
+        first_try_result=first_try_result,                # the message for their saved first try
         retry_choices=data.shuffled_retry_choices(lab),   # new order and letters for Try it again
     )
 
@@ -147,7 +150,14 @@ def record_attempt(lab_id):
     )
     if try_number == 2:
         data.clear_progress(lab_id)   # finished, so there's nothing left to resume
-    return jsonify(record), 201
+    
+    # Send back what happened for this choice, so the player can show it
+    reply = {**record, "result": data.result_for(lab, try_number, choice)}
+    # The safe choice is only named once the lab is over. After try 1 it would give away try 2,
+    # which uses the same choices (just shuffled) unless the lab has its own retry_choices.
+    if try_number == 2:
+        reply["safe_label"] = data.safe_choice_label(lab, try_number)
+    return jsonify(reply), 201
 
 
 # TODO(Isabella): add CSRF protection to this route when login is added

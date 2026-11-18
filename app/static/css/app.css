@@ -804,6 +804,12 @@ a {
     max-width: 880px;
     margin: 0 auto;
 }
+/* Right/wrong banner after a try */
+.cc-feedback { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; margin-bottom: 16px; border-radius: var(--radius-sm); }
+.cc-feedback .bi { font-size: 22px; line-height: 1; }
+.cc-feedback-title { font-weight: 700; }
+.cc-feedback.safe { background: var(--success-tint); color: var(--success-ink); }
+.cc-feedback.unsafe { background: var(--danger-tint); color: var(--danger-ink); }
 
 .cc-stage-title {
     font-family: var(--font-heading);

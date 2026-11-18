@@ -159,8 +159,8 @@ class ResumeTest(CleanStateTest):
         self.save_stage("result")
         page = self.play_page()
         self.assertIn('data-start-stage="result"', page)
-        self.assertIn('<div id="result-safe" >', page)
-
+        self.assertIn('id="result-safe" >', page)
+        
     def test_rejects_bad_stage(self):
         url = f"/api/labs/{self.lab_id}/progress"
         self.assertEqual(self.save_stage("finished").status_code, 400)
@@ -234,6 +234,73 @@ class RetryTest(CleanStateTest):
         finally:
             del content["retry_choices"]
 
+class ResultTest(CleanStateTest):
+    """After a try, the learner sees the result for the exact choice they made."""
+
+    def post(self, body):
+        return self.client.post(f"/api/labs/{self.lab_id}/attempts", json=body)
+
+    def test_each_choice_returns_its_own_result(self):
+        lab = data.get_lab(self.lab_id)
+        for choice in lab["choices"]:
+            with self.subTest(choice=choice["key"]):
+                result = self.post({"choice": choice["key"], "try_number": 1}).get_json()["result"]
+                expected = choice.get("result") or (lab["result_safe"] if choice["safe"] else lab["result_unsafe"])
+                self.assertEqual(result, expected)
+                self.assertTrue(result)
+
+    def test_falls_back_to_general_message(self):
+        """A lab without per-choice results still gets the general safe or unsafe text."""
+        lab = data.get_lab(data.LABS[1]["id"])
+        unsafe = next(c for c in lab["choices"] if not c["safe"])
+        self.assertNotIn("result", unsafe)
+        r = self.client.post(f"/api/labs/{lab['id']}/attempts", json={"choice": unsafe["key"], "try_number": 1})
+        self.assertEqual(r.get_json()["result"], lab["result_unsafe"])
+
+    def test_resume_shows_saved_result(self):
+        lab = data.get_lab(self.lab_id)
+        unsafe = next(c for c in lab["choices"] if not c["safe"] and c.get("result"))
+        self.post({"choice": unsafe["key"], "try_number": 1})
+        self.client.post(f"/api/labs/{self.lab_id}/progress", json={"stage": "result"})
+        page = self.client.get(f"/labs/{self.lab_id}/play").get_data(as_text=True)
+        self.assertIn(unsafe["result"].replace("'", "&#39;"), page)
+
+    def test_result_text_not_in_page_before_answering(self):
+        """Results only show up after a try, so they can't give the answer away."""
+        page = self.client.get(f"/labs/{self.lab_id}/play").get_data(as_text=True)
+        for choice in data.get_lab(self.lab_id)["choices"]:
+            if choice.get("result"):
+                self.assertNotIn(choice["result"].replace("'", "&#39;"), page)
+
+class FeedbackTest(CleanStateTest):
+    """The learner can tell right away if they got it right, and the overview shows where they are."""
+
+    def test_second_try_says_safe_choice(self):
+        """Once the lab is over, a wrong second try names the safe choice."""
+        lab = data.get_lab(self.lab_id)
+        retry = data.choices_for_try(lab, 2)
+        safe = next(c for c in retry if c["safe"])
+        unsafe = next(c for c in retry if not c["safe"])
+        self.client.post(f"/api/labs/{self.lab_id}/attempts", json={"choice": unsafe["key"], "try_number": 1})
+        body = self.client.post(f"/api/labs/{self.lab_id}/attempts", json={"choice": unsafe["key"], "try_number": 2}).get_json()
+        self.assertFalse(body["safe"])
+        self.assertEqual(body["safe_label"], safe["label"])
+
+    def test_first_try_never_reveals_safe_choice(self):
+        """Naming the safe choice after try 1 would give away Try it again, so it's left out everywhere."""
+        lab = data.get_lab(self.lab_id)
+        unsafe = next(c for c in lab["choices"] if not c["safe"])
+        body = self.client.post(f"/api/labs/{self.lab_id}/attempts", json={"choice": unsafe["key"], "try_number": 1}).get_json()
+        self.assertNotIn("safe_label", body)
+        # Resumed at "What happened": the page still doesn't name it
+        self.client.post(f"/api/labs/{self.lab_id}/progress", json={"stage": "result"})
+        page = self.client.get(f"/labs/{self.lab_id}/play").get_data(as_text=True)
+        self.assertNotIn("result-safe-label", page)
+        self.assertNotIn("The safe choice was", page.split('data-stage="retry-result"')[0])
+
+    def test_safe_label_not_in_page_before_answering(self):
+        page = self.client.get(f"/labs/{self.lab_id}/play").get_data(as_text=True)
+        self.assertIn('<strong id="retry-safe-label"></strong>', page)
 
 class AttemptApiTest(unittest.TestCase):
     def setUp(self):

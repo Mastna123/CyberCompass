@@ -26,7 +26,7 @@
     </button>
 </header>
 
-{# TODO(Isabella): change data-finish-url to the results page in Step 7 #}
+{# TODO(Isabella): point data-finish-url to the Results page once that's built #}
 <main class="page stack" id="lab-player"
       data-attempt-url="{{ url_for('record_attempt', lab_id=lab.id) }}"
       data-progress-url="{{ url_for('record_progress', lab_id=lab.id) }}"
@@ -71,17 +71,21 @@
         <button type="button" class="btn-cc" data-lock="first" disabled>Lock it in</button>
     </section>
 
-    {# ---------- What happened (still step 2) ---------- #}
+    {# ---------- What happened (still part of step 2) ---------- #}
     <section class="cc-card cc-stage" data-stage="result" data-step="2" hidden>
-        {# On resume, show the message for the learner's saved first try #}
-        <div id="result-safe" {% if first_try_safe is not true %}hidden{% endif %}>
-            <div class="eyebrow">Nice catch</div>
-            <p>{{ lab.result_safe }}</p>
+        {# A green or red banner says right away if the choice was safe. The text under it is the result for the exact choice they made. #}
+        {# TODO(Justin): banner wording #}
+        <div class="cc-feedback safe" id="result-safe" {% if first_try_safe is not true %}hidden{% endif %}>
+            <i class="bi bi-check-circle-fill"></i>
+            <div class="cc-feedback-title">Nice catch! That was the safe choice.</div>
         </div>
-        <div id="result-unsafe" {% if first_try_safe is not false %}hidden{% endif %}>
-            <div class="eyebrow">Here's what happened</div>
-            <p>{{ lab.result_unsafe }}</p>
+        {# No "The safe choice was" here on purpose: Apply the control teaches it, and naming it would give away Try it again #}
+        <div class="cc-feedback unsafe" id="result-unsafe" {% if first_try_safe is not false %}hidden{% endif %}>
+            <i class="bi bi-x-circle-fill"></i>
+            <div class="cc-feedback-title">Not quite. That wasn't the safe choice.</div>
         </div>
+        <div class="eyebrow">What happened</div>
+        <p id="result-text">{{ first_try_result }}</p>
         <button type="button" class="btn-cc" data-next="control">Show me the safe way</button>
     </section>
 
@@ -109,6 +113,25 @@
             {% endfor %}
         </div>
         <button type="button" class="btn-cc" data-lock="second" disabled>Lock it in</button>
+    </section>
+
+    {# ---------- How the second try went (still step 4) ---------- #}
+    {# Nothing here is filled in until they answer. lab_player.js adds the text. #}
+    <section class="cc-card cc-stage" data-stage="retry-result" data-step="4" hidden>
+        <div class="cc-feedback safe" id="retry-safe" hidden>
+            <i class="bi bi-check-circle-fill"></i>
+            <div class="cc-feedback-title">You got it! That was the safe choice.</div>
+        </div>
+        <div class="cc-feedback unsafe" id="retry-unsafe" hidden>
+            <i class="bi bi-x-circle-fill"></i>
+            <div>
+                <div class="cc-feedback-title">Not quite this time.</div>
+                <div>The safe choice was: <strong id="retry-safe-label"></strong></div>
+            </div>
+        </div>
+        <div class="eyebrow">What happened</div>
+        <p id="retry-text"></p>
+        <button type="button" class="btn-cc" id="finish-button">Finish lab <i class="bi bi-arrow-right"></i></button>
     </section>
 </main>
 {% endblock %}

@@ -151,6 +151,28 @@ def closest_track():
 # TODO(Isabella): move to an "attempts" table in SQLite. This list empties when the server restarts.
 ATTEMPTS = []
 
+def first_try(lab_id):
+    """The current user's latest first try on this lab, or None if there isn't one yet."""
+    for record in reversed(ATTEMPTS):
+        if record["lab_id"] == lab_id and record["user_id"] == CURRENT_USER["id"] and record["try_number"] == 1:
+            return record
+    return None
+
+
+def result_for(lab, try_number, choice_key):
+    """What happened after this choice. Uses the choice's own "result" if it has one,
+    otherwise the lab's general safe or unsafe message."""
+    picked = next((c for c in choices_for_try(lab, try_number) if c["key"] == choice_key), None)
+    if picked is None:
+        return ""
+    if picked.get("result"):
+        return picked["result"]
+    return lab["result_safe"] if picked["safe"] else lab["result_unsafe"]
+
+def safe_choice_label(lab, try_number):
+    """The wording of the safe choice, so we can show it after the learner answers."""
+    safe = next((c for c in choices_for_try(lab, try_number) if c["safe"]), None)
+    return safe["label"] if safe else ""
 
 def first_try_safe(lab_id):
     """Was the learner's latest first try on this lab safe? None if there's no first try yet."""
