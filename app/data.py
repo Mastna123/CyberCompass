@@ -232,6 +232,23 @@ def clear_progress(lab_id):
     PROGRESS.pop((CURRENT_USER["id"], lab_id), None)
 
 
+def reset_all():
+    """DEV ONLY: put the current user back at the start, with no labs done.
+
+    The labs, their content, and assignments stay. Only progress is cleared:
+    saved tries, where they are in each lab, lab status, XP, and streak.
+    Restarting the server brings the demo data back, since it all lives in memory for now.
+    """
+    ATTEMPTS.clear()
+    PROGRESS.clear()
+    for lab in LABS:
+        lab["status"] = "new"
+        lab.pop("completed", None)
+        lab.pop("time_left", None)
+    CURRENT_USER["xp"] = 0
+    CURRENT_USER["streak_weeks"] = 0
+
+
 def save_attempt(lab_id, try_number, choice, seconds, hints_used):
     """Record one try and return it. Flask decides if the choice was safe, not the browser."""
     lab = get_lab(lab_id)

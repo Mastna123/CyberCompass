@@ -4,6 +4,7 @@ Run from the repo root:  python -m unittest discover tests -v
 Checks that every lab page loads, every lab has exactly one safe choice,
 and Flask scores tries correctly. No browser or server needed.
 """
+import copy
 import os
 import sys
 import unittest
@@ -345,6 +346,55 @@ class AttemptApiTest(unittest.TestCase):
         r = self.post(lab_id, {"choice": "A", "try_number": 1, "seconds": "abc", "hints_used": 999})
         self.assertEqual(r.get_json()["seconds"], 0)
         self.assertEqual(r.get_json()["hints_used"], 50)
+
+
+class DevResetTest(CleanStateTest):
+    """The dev-only reset clears progress but keeps the labs, and is off unless the app runs with --debug."""
+
+    def setUp(self):
+        super().setUp()
+        self.saved_labs = copy.deepcopy(data.LABS)
+        self.saved_user = dict(data.CURRENT_USER)
+        self.saved_debug = app.debug
+        # Some progress to clear
+        self.client.post(f"/api/labs/{self.lab_id}/attempts", json={"choice": "A", "try_number": 1})
+        self.client.post(f"/api/labs/{self.lab_id}/progress", json={"stage": "control"})
+
+    def tearDown(self):
+        app.debug = self.saved_debug
+        data.LABS[:] = self.saved_labs
+        data.CURRENT_USER.clear()
+        data.CURRENT_USER.update(self.saved_user)
+        super().tearDown()
+
+    def test_off_without_debug(self):
+        app.debug = False
+        self.assertEqual(self.client.post("/dev/reset").status_code, 404)
+        self.assertTrue(data.ATTEMPTS)
+        self.assertTrue(data.PROGRESS)
+        self.assertNotIn("cc-dev-reset", self.client.get("/").get_data(as_text=True))
+
+    def test_resets_progress_but_keeps_labs(self):
+        app.debug = True
+        lab_count = len(data.LABS)
+        r = self.client.post("/dev/reset")
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(r.headers["Location"], "/")
+        self.assertEqual(data.ATTEMPTS, [])
+        self.assertEqual(data.PROGRESS, {})
+        self.assertEqual(len(data.LABS), lab_count)
+        self.assertTrue(all(lab["status"] == "new" for lab in data.LABS))
+        self.assertEqual(data.CURRENT_USER["xp"], 0)
+        self.assertEqual(data.get_lab(self.lab_id)["stage"], "learn")
+        # Every page still works from a clean start, and the button is only on the dashboard
+        home = self.client.get("/")
+        self.assertEqual(home.status_code, 200)
+        self.assertIn("cc-dev-reset", home.get_data(as_text=True))
+        for url in ("/labs", f"/labs/{self.lab_id}", f"/labs/{self.lab_id}/play"):
+            with self.subTest(url=url):
+                page = self.client.get(url)
+                self.assertEqual(page.status_code, 200)
+                self.assertNotIn("cc-dev-reset", page.get_data(as_text=True))
 
 
 if __name__ == "__main__":

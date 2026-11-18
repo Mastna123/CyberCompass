@@ -2,7 +2,7 @@
 
 Run with: python -m flask --app app run --debug
 """
-from flask import Flask, abort, jsonify, render_template, request
+from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
 
 import data
 import lab_content
@@ -175,3 +175,12 @@ def record_progress(lab_id):
 
     data.save_progress(lab_id, stage)
     return jsonify({"stage": stage}), 200
+
+
+@app.post("/dev/reset")
+def dev_reset():
+    """DEV ONLY: clear all progress so you can test from the start. Doesn't exist unless run with --debug."""
+    if not app.debug:
+        abort(404)
+    data.reset_all()
+    return redirect(url_for("home"))

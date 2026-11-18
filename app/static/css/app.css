@@ -912,3 +912,23 @@ a {
         min-height: 76px;
     }
 }
+
+/* ---------- DEV ONLY: reset progress button (home.html, shows only with --debug) ---------- */
+/* Dashed so it never looks like part of the product. Sits a full screen below the end of
+   the dashboard, so it's out of sight (and out of screenshots) unless you scroll down to it. */
+.cc-dev-reset {
+    display: flex;
+    justify-content: flex-end;
+    margin: 100vh 0 0;
+    padding-bottom: 12px;
+}
+
+.cc-dev-reset button {
+    font: 600 12px var(--font-body);
+    color: var(--warning-ink);
+    background: var(--warning-tint);
+    border: 1px dashed var(--warning-ink);
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
