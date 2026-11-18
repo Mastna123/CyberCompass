@@ -825,6 +825,10 @@ a {
     text-align: center;
 }
 
+.cc-desk-inner { max-width: 520px; }
+.cc-desk-icon { font-size: 32px; color: var(--hero-ink); }
+.cc-desk-title { margin: 8px 0; font-weight: 600; color: var(--hero-ink); }
+
 .cc-hint {
     width: 100%;
     max-width: 880px;

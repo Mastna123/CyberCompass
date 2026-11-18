@@ -46,7 +46,19 @@
     {# ---------- Step 2: Make the call ---------- #}
     <section class="cc-card cc-stage" data-stage="decide" data-step="2" hidden>
         {# TODO(Luke): the Guacamole practice desktop goes here #}
-        <div class="cc-desk">Practice desktop will appear here</div>
+        {# The text below is just so the demo makes sense. It goes away once the real desktop is in. #}
+        <div class="cc-desk">
+            <div class="cc-desk-inner">
+                <i class="bi bi-display cc-desk-icon"></i>
+                <p class="cc-desk-title">Practice desktop will appear here</p>
+                {# TODO(Derrick): confirm this is an accurate way to describe the isolation #}
+                <p>This is where you'll use a <b>safe</b> and <b>contained</b> practice environment that's set up just for this lab.</p>
+                <p><b>Nothing you do here can affect your real computer or your company's systems.</b></p>
+                {% if lab.desk_preview %}
+                <p>{{ lab.desk_preview }}</p>
+                {% endif %}
+            </div>
+        </div>
         <div class="eyebrow">Make the call</div>
         <h2 class="cc-stage-title">{{ lab.prompt }}</h2>
         <div class="cc-choices" data-group="first">
