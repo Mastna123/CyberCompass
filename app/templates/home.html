@@ -149,4 +149,12 @@
         </section>
     </div>
 </div>
+
+{# DEV ONLY: resets all progress for testing. Only shows when the app runs with --debug. #}
+{% if config.DEBUG %}
+<form method="post" action="{{ url_for('dev_reset') }}" class="cc-dev-reset"
+      onsubmit="return confirm('Reset all progress back to the beginning? (dev only)')">
+    <button type="submit"><i class="bi bi-arrow-counterclockwise"></i> Dev: reset progress</button>
+</form>
+{% endif %}
 {% endblock %}

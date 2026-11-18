@@ -702,6 +702,8 @@ a {
     color: var(--on-primary);
 }
 
+.cc-step.done .cc-step-num { background: var(--success); border-color: var(--success); color: #fff; }
+
 .cc-preview {
     min-height: 160px;
     padding: 16px;
@@ -804,6 +806,12 @@ a {
     max-width: 880px;
     margin: 0 auto;
 }
+/* Right/wrong banner after a try */
+.cc-feedback { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; margin-bottom: 16px; border-radius: var(--radius-sm); }
+.cc-feedback .bi { font-size: 22px; line-height: 1; }
+.cc-feedback-title { font-weight: 700; }
+.cc-feedback.safe { background: var(--success-tint); color: var(--success-ink); }
+.cc-feedback.unsafe { background: var(--danger-tint); color: var(--danger-ink); }
 
 .cc-stage-title {
     font-family: var(--font-heading);
@@ -824,6 +832,10 @@ a {
     justify-content: center;
     text-align: center;
 }
+
+.cc-desk-inner { max-width: 520px; }
+.cc-desk-icon { font-size: 32px; color: var(--hero-ink); }
+.cc-desk-title { margin: 8px 0; font-weight: 600; color: var(--hero-ink); }
 
 .cc-hint {
     width: 100%;
@@ -899,4 +911,24 @@ a {
         height: auto;
         min-height: 76px;
     }
+}
+
+/* ---------- DEV ONLY: reset progress button (home.html, shows only with --debug) ---------- */
+/* Dashed so it never looks like part of the product. Sits a full screen below the end of
+   the dashboard, so it's out of sight (and out of screenshots) unless you scroll down to it. */
+.cc-dev-reset {
+    display: flex;
+    justify-content: flex-end;
+    margin: 100vh 0 0;
+    padding-bottom: 12px;
+}
+
+.cc-dev-reset button {
+    font: 600 12px var(--font-body);
+    color: var(--warning-ink);
+    background: var(--warning-tint);
+    border: 1px dashed var(--warning-ink);
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
 }

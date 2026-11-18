@@ -4,6 +4,7 @@ Run from the repo root:  python -m unittest discover tests -v
 Checks that every lab page loads, every lab has exactly one safe choice,
 and Flask scores tries correctly. No browser or server needed.
 """
+import copy
 import os
 import sys
 import unittest
@@ -159,8 +160,8 @@ class ResumeTest(CleanStateTest):
         self.save_stage("result")
         page = self.play_page()
         self.assertIn('data-start-stage="result"', page)
-        self.assertIn('<div id="result-safe" >', page)
-
+        self.assertIn('id="result-safe" >', page)
+        
     def test_rejects_bad_stage(self):
         url = f"/api/labs/{self.lab_id}/progress"
         self.assertEqual(self.save_stage("finished").status_code, 400)
@@ -234,7 +235,87 @@ class RetryTest(CleanStateTest):
         finally:
             del content["retry_choices"]
 
+class ResultTest(CleanStateTest):
+    """After a try, the learner sees the result for the exact choice they made."""
 
+    def post(self, body):
+        return self.client.post(f"/api/labs/{self.lab_id}/attempts", json=body)
+
+    def test_each_choice_returns_its_own_result(self):
+        lab = data.get_lab(self.lab_id)
+        for choice in lab["choices"]:
+            with self.subTest(choice=choice["key"]):
+                result = self.post({"choice": choice["key"], "try_number": 1}).get_json()["result"]
+                expected = choice.get("result") or (lab["result_safe"] if choice["safe"] else lab["result_unsafe"])
+                self.assertEqual(result, expected)
+                self.assertTrue(result)
+
+    def test_falls_back_to_general_message(self):
+        """A lab without per-choice results still gets the general safe or unsafe text."""
+        lab = data.get_lab(data.LABS[1]["id"])
+        unsafe = next(c for c in lab["choices"] if not c["safe"])
+        self.assertNotIn("result", unsafe)
+        r = self.client.post(f"/api/labs/{lab['id']}/attempts", json={"choice": unsafe["key"], "try_number": 1})
+        self.assertEqual(r.get_json()["result"], lab["result_unsafe"])
+
+    def test_resume_shows_saved_result(self):
+        lab = data.get_lab(self.lab_id)
+        unsafe = next(c for c in lab["choices"] if not c["safe"] and c.get("result"))
+        self.post({"choice": unsafe["key"], "try_number": 1})
+        self.client.post(f"/api/labs/{self.lab_id}/progress", json={"stage": "result"})
+        page = self.client.get(f"/labs/{self.lab_id}/play").get_data(as_text=True)
+        self.assertIn(unsafe["result"].replace("'", "&#39;"), page)
+
+    def test_result_text_not_in_page_before_answering(self):
+        """Results only show up after a try, so they can't give the answer away."""
+        page = self.client.get(f"/labs/{self.lab_id}/play").get_data(as_text=True)
+        for choice in data.get_lab(self.lab_id)["choices"]:
+            if choice.get("result"):
+                self.assertNotIn(choice["result"].replace("'", "&#39;"), page)
+
+class FeedbackTest(CleanStateTest):
+    """The learner can tell right away if they got it right, and the overview shows where they are."""
+
+    def test_second_try_says_safe_choice(self):
+        """Once the lab is over, a wrong second try names the safe choice."""
+        lab = data.get_lab(self.lab_id)
+        retry = data.choices_for_try(lab, 2)
+        safe = next(c for c in retry if c["safe"])
+        unsafe = next(c for c in retry if not c["safe"])
+        self.client.post(f"/api/labs/{self.lab_id}/attempts", json={"choice": unsafe["key"], "try_number": 1})
+        body = self.client.post(f"/api/labs/{self.lab_id}/attempts", json={"choice": unsafe["key"], "try_number": 2}).get_json()
+        self.assertFalse(body["safe"])
+        self.assertEqual(body["safe_label"], safe["label"])
+
+    def test_first_try_never_reveals_safe_choice(self):
+        """Naming the safe choice after try 1 would give away Try it again, so it's left out everywhere."""
+        lab = data.get_lab(self.lab_id)
+        unsafe = next(c for c in lab["choices"] if not c["safe"])
+        body = self.client.post(f"/api/labs/{self.lab_id}/attempts", json={"choice": unsafe["key"], "try_number": 1}).get_json()
+        self.assertNotIn("safe_label", body)
+        # Resumed at "What happened": the page still doesn't name it
+        self.client.post(f"/api/labs/{self.lab_id}/progress", json={"stage": "result"})
+        page = self.client.get(f"/labs/{self.lab_id}/play").get_data(as_text=True)
+        self.assertNotIn("result-safe-label", page)
+        self.assertNotIn("The safe choice was", page.split('data-stage="retry-result"')[0])
+
+    def test_safe_label_not_in_page_before_answering(self):
+        page = self.client.get(f"/labs/{self.lab_id}/play").get_data(as_text=True)
+        self.assertIn('<strong id="retry-safe-label"></strong>', page)
+
+    def test_overview_highlights_saved_step(self):
+        self.client.post(f"/api/labs/{self.lab_id}/progress", json={"stage": "control"})
+        page = self.client.get(f"/labs/{self.lab_id}").get_data(as_text=True)
+        self.assertEqual(page.count('class="cc-step done"'), 2)
+        self.assertEqual(page.count('class="cc-step current"'), 1)
+        self.assertIn("Resume lab", page)
+
+    def test_overview_new_lab_starts_at_step_one(self):
+        lab = next(l for l in data.LABS if not data.has_progress(l["id"]))
+        page = self.client.get(f"/labs/{lab['id']}").get_data(as_text=True)
+        self.assertEqual(page.count('class="cc-step done"'), 0)
+        self.assertIn("Start lab", page)
+        
 class AttemptApiTest(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()
@@ -265,6 +346,55 @@ class AttemptApiTest(unittest.TestCase):
         r = self.post(lab_id, {"choice": "A", "try_number": 1, "seconds": "abc", "hints_used": 999})
         self.assertEqual(r.get_json()["seconds"], 0)
         self.assertEqual(r.get_json()["hints_used"], 50)
+
+
+class DevResetTest(CleanStateTest):
+    """The dev-only reset clears progress but keeps the labs, and is off unless the app runs with --debug."""
+
+    def setUp(self):
+        super().setUp()
+        self.saved_labs = copy.deepcopy(data.LABS)
+        self.saved_user = dict(data.CURRENT_USER)
+        self.saved_debug = app.debug
+        # Some progress to clear
+        self.client.post(f"/api/labs/{self.lab_id}/attempts", json={"choice": "A", "try_number": 1})
+        self.client.post(f"/api/labs/{self.lab_id}/progress", json={"stage": "control"})
+
+    def tearDown(self):
+        app.debug = self.saved_debug
+        data.LABS[:] = self.saved_labs
+        data.CURRENT_USER.clear()
+        data.CURRENT_USER.update(self.saved_user)
+        super().tearDown()
+
+    def test_off_without_debug(self):
+        app.debug = False
+        self.assertEqual(self.client.post("/dev/reset").status_code, 404)
+        self.assertTrue(data.ATTEMPTS)
+        self.assertTrue(data.PROGRESS)
+        self.assertNotIn("cc-dev-reset", self.client.get("/").get_data(as_text=True))
+
+    def test_resets_progress_but_keeps_labs(self):
+        app.debug = True
+        lab_count = len(data.LABS)
+        r = self.client.post("/dev/reset")
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(r.headers["Location"], "/")
+        self.assertEqual(data.ATTEMPTS, [])
+        self.assertEqual(data.PROGRESS, {})
+        self.assertEqual(len(data.LABS), lab_count)
+        self.assertTrue(all(lab["status"] == "new" for lab in data.LABS))
+        self.assertEqual(data.CURRENT_USER["xp"], 0)
+        self.assertEqual(data.get_lab(self.lab_id)["stage"], "learn")
+        # Every page still works from a clean start, and the button is only on the dashboard
+        home = self.client.get("/")
+        self.assertEqual(home.status_code, 200)
+        self.assertIn("cc-dev-reset", home.get_data(as_text=True))
+        for url in ("/labs", f"/labs/{self.lab_id}", f"/labs/{self.lab_id}/play"):
+            with self.subTest(url=url):
+                page = self.client.get(url)
+                self.assertEqual(page.status_code, 200)
+                self.assertNotIn("cc-dev-reset", page.get_data(as_text=True))
 
 
 if __name__ == "__main__":

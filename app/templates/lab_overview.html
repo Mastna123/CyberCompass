@@ -45,9 +45,12 @@
         <section class="cc-card">
             <h2 class="card-title-cc mb-3">How this lab works</h2>
             <div class="cc-steps">
+                {# Steps before the learner's saved step are done, and their saved step is current #}
                 {% for step in steps %}
-                <div class="cc-step {% if loop.first %}current{% endif %}">
-                    <div class="cc-step-num">{{ loop.index }}</div>
+                <div class="cc-step {% if loop.index < current_step %}done{% elif loop.index == current_step %}current{% endif %}">
+                    <div class="cc-step-num">
+                        {% if loop.index < current_step %}<i class="bi bi-check-lg"></i>{% else %}{{ loop.index }}{% endif %}
+                    </div>
                     <div class="cc-item-title">{{ step.title }}</div>
                     <div class="cc-meta">{{ step.summary }}</div>
                 </div>
@@ -72,7 +75,7 @@
         {# TODO(Luke): replace with a real preview of the lab environment #}
         <div class="cc-preview">Preview of the practice environment<br>(coming soon)</div>
 
-        <a href="{{ url_for('lab_play', lab_id=lab.id) }}" class="btn-cc lg w-100">Start lab <i class="bi bi-arrow-right"></i></a>
+        <a href="{{ url_for('lab_play', lab_id=lab.id) }}" class="btn-cc lg w-100">{{ "Resume lab" if started else "Start lab" }} <i class="bi bi-arrow-right"></i></a>
 
         <dl class="cc-details">
             <dt>Reward</dt>

@@ -50,6 +50,9 @@ PLACEHOLDER = {
     "result_safe": "[What happens when they make the safe choice]",
     "result_unsafe": "[What happens when they make an unsafe choice]",
 
+    # Optional: any choice can have its own "result" (what happens after picking it).
+    # Leave it out and the general result_safe / result_unsafe text is used instead.
+
     # Step 3: Apply the control
     "control_steps": ["[Step 1]", "[Step 2]", "[Step 3]"],
 
@@ -71,24 +74,37 @@ PLACEHOLDER = {
 # A lab can also have its own "retry_choices" for Try it again (see PLACEHOLDER above).
 # ---------------------------------------------------------------------------
 LAB_CONTENT = {
-    1: {  # Phishing email
-        # TODO(Derrick): confirm the safe choice and that each unsafe choice is really unsafe
-        "scenario_title": "[Scenario title]",
+        1: {  # Phishing email
+        # TODO(Justin): demo wording I kept simple on purpose. Please review and expand it however you'd like.
+        # TODO(Derrick): confirm the safe choice and that each result is accurate
+        "scenario_title": "The overdue invoice",
         "situation": "An overdue invoice from a lookalike vendor address arrives with a zipped attachment.",
-        "outcomes": ["[Learning outcome 1]", "[Learning outcome 2]", "[Learning outcome 3]"],
-        "learn": "[One short, plain-language idea]",
+        "desk_preview": "In this lab, you'll see a pretend email inbox with the overdue invoice in it. You can check the sender, the subject, and the attachment name, then decide what to do below.",
+        "outcomes": [
+            "Spot the warning signs in a suspicious email",
+            "Use the Report button instead of replying or forwarding",
+            "Explain why surprise attachments are risky",
+        ],
+        "learn": "Scammers want you to act fast. An urgent tone, a sender address that's almost right, and an attachment you weren't expecting are all signs to slow down and report the email instead of opening it.",
         "prompt": "What do you do with this email?",
         "choices": [
-            {"key": "A", "label": "Open the zipped attachment to check the invoice.", "safe": False},
-            {"key": "B", "label": "Report it with the Report button without opening it.", "safe": True},
-            {"key": "C", "label": "Reply and ask the vendor to confirm it's real.", "safe": False},
-            {"key": "D", "label": "Forward it to a coworker to take a look.", "safe": False},
+            {"key": "A", "label": "Open the zipped attachment to check the invoice.", "safe": False,
+            "result": "The zip file wasn't an invoice. It installed malware on your computer, and IT had to take your laptop offline to clean it up."},
+            {"key": "B", "label": "Report it with the Report button without opening it.", "safe": True,
+            "result": "IT confirmed it was a phishing email and blocked the sender for everyone, so nobody else could fall for it."},
+            {"key": "C", "label": "Reply and ask the vendor to confirm it's real.", "safe": False,
+            "result": "The scammer wrote back right away saying the invoice is real and the payment is urgent. Now they know your email is active, and they keep pushing."},
+            {"key": "D", "label": "Forward it to a coworker to take a look.", "safe": False,
+            "result": "Your coworker opened the attachment, thinking you'd already checked it. Now their computer has the problem instead of yours."},
         ],
-        "result_safe": "[What happens when they make the safe choice]",
-        "result_unsafe": "[What happens when they make an unsafe choice]",
-        "control_steps": ["[Step 1]", "[Step 2]", "[Step 3]"],
-        "retry_prompt": "[A new version of the same situation]",
-        "hint": "[A short hint that points them in the right direction]",
+        "control_steps": [
+            "Don't open the attachment or click any links.",
+            "Look closely at the sender's address. Small misspellings are a common giveaway.",
+            "Click the Report button so IT can check it and warn everyone else.",
+            "If you think a real bill might be overdue, contact the vendor using contact info you already have.",
+        ],
+        "retry_prompt": "A week later, another overdue invoice shows up from a slightly different vendor address. It has a zipped attachment and warns about a late fee.",
+        "hint": "Look closely at the sender's address. Does it match the vendor's real one?",
     },
     2: {  # Password reuse
         # TODO(Derrick): confirm the safe choice and that each unsafe choice is really unsafe

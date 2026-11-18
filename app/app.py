@@ -2,7 +2,7 @@
 
 Run with: python -m flask --app app run --debug
 """
-from flask import Flask, abort, jsonify, render_template, request
+from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
 
 import data
 import lab_content
@@ -86,6 +86,8 @@ def lab_overview(lab_id):
         lab=lab,
         track=data.get_track(lab["track"]),
         steps=lab_content.LAB_STEPS,
+        current_step=lab["step"],                      # which step "How this lab works" highlights
+        started=data.has_progress(lab_id),             # "Resume lab" instead of "Start lab"
     )
 
 
@@ -95,12 +97,15 @@ def lab_play(lab_id):
     lab = data.get_lab(lab_id)
     if lab is None:
         abort(404)
+    saved_first_try = data.first_try(lab_id)
+    first_try_result = data.result_for(lab, 1, saved_first_try["choice"]) if saved_first_try else ""
     return render_template(
         "lab_play.html",
         lab=lab,
         steps=lab_content.LAB_STEPS,
         start_stage=lab["stage"],                         # where Resume picks up
         first_try_safe=data.first_try_safe(lab_id),       # for "What happened" on resume
+        first_try_result=first_try_result,                # the message for their saved first try
         retry_choices=data.shuffled_retry_choices(lab),   # new order and letters for Try it again
     )
 
@@ -147,7 +152,14 @@ def record_attempt(lab_id):
     )
     if try_number == 2:
         data.clear_progress(lab_id)   # finished, so there's nothing left to resume
-    return jsonify(record), 201
+    
+    # Send back what happened for this choice, so the player can show it
+    reply = {**record, "result": data.result_for(lab, try_number, choice)}
+    # The safe choice is only named once the lab is over. After try 1 it would give away try 2,
+    # which uses the same choices (just shuffled) unless the lab has its own retry_choices.
+    if try_number == 2:
+        reply["safe_label"] = data.safe_choice_label(lab, try_number)
+    return jsonify(reply), 201
 
 
 # TODO(Isabella): add CSRF protection to this route when login is added
@@ -163,3 +175,12 @@ def record_progress(lab_id):
 
     data.save_progress(lab_id, stage)
     return jsonify({"stage": stage}), 200
+
+
+@app.post("/dev/reset")
+def dev_reset():
+    """DEV ONLY: clear all progress so you can test from the start. Doesn't exist unless run with --debug."""
+    if not app.debug:
+        abort(404)
+    data.reset_all()
+    return redirect(url_for("home"))
