@@ -12,8 +12,18 @@ document.addEventListener("DOMContentLoaded", () => {
     let hintsUsed = 0;
     let stageStartedAt = Date.now();
 
+    // Tell Flask which stage the learner reached, so Resume can open there.
+    // Fire and forget: if it fails, the learner keeps going and just resumes a bit earlier.
+    function saveProgress(name) {
+        fetch(player.dataset.progressUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ stage: name }),
+        }).catch(() => console.warn("Could not save progress"));
+    }
+
     // Show one stage and update the stepper at the top
-    function showStage(name) {
+    function showStage(name, { save = true } = {}) {
         let currentStep = 1;
         stages.forEach((stage) => {
             const isThisOne = stage.dataset.stage === name;
@@ -27,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         stageStartedAt = Date.now();   // used for "time to correct"
         window.scrollTo(0, 0);
+        if (save) saveProgress(name);
     }
 
     // Send one try to Flask. Flask replies with the saved record, including "safe".
@@ -96,5 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("hint-box").hidden = false;
     });
 
-    showStage("learn");
+    // Open where the learner left off (Flask sends "learn" if they haven't started)
+    showStage(player.dataset.startStage || "learn", { save: false });
 });

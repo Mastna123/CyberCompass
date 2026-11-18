@@ -3,6 +3,7 @@
 TODO(Isabella): replace this placeholder data with SQLite queries.
 Keep the same keys and the templates won't need to change.
 """
+import random
 from datetime import datetime
 
 import lab_content
@@ -21,7 +22,7 @@ TRACKS = [
 # role_groups: who the lab is for. "Everyone" means every role group takes it.
 # minutes / xp / due dates / statuses are placeholders until the team decides them.
 LABS = [
-    {"id": 1, "title": "Phishing email", "track": "social", "role_groups": ["Everyone"], "minutes": 15, "xp": 150, "status": "in_progress", "assigned": False, "step": 2, "time_left": "about 8 min left"},
+    {"id": 1, "title": "Phishing email", "track": "social", "role_groups": ["Everyone"], "minutes": 15, "xp": 150, "status": "in_progress", "assigned": False, "time_left": "about 8 min left"},
     {"id": 2, "title": "Password reuse", "track": "identity", "role_groups": ["Everyone"], "minutes": 15, "xp": 150, "status": "done", "assigned": False, "completed": "Sep 18"},
     {"id": 3, "title": "MFA push fatigue", "track": "identity", "role_groups": ["Everyone"], "minutes": 15, "xp": 150, "status": "new", "assigned": True, "due": "Friday"},
     {"id": 4, "title": "Software updates", "track": "network", "role_groups": ["Everyone"], "minutes": 15, "xp": 150, "status": "done", "assigned": False, "completed": "Sep 11"},
@@ -31,11 +32,21 @@ LABS = [
     {"id": 8, "title": "Responding to a report", "track": "social", "role_groups": ["Leadership", "Management"], "minutes": 15, "xp": 150, "status": "new", "assigned": False},
 ]
 
+# Every account has one permission role and one role group.
+# Permission role: what the account can do. Learning administrators can also take labs.
+PERMISSION_ROLES = {"learner": "Learner", "admin": "Learning administrator"}
+
+# Role group: who the person is at work. Decides which labs are for them.
+# A lab's role_groups uses these names, or "Everyone".
+# ("Deskless workers" was renamed to "Frontline staff".)
+ROLE_GROUPS = ["Leadership", "Management", "Office staff", "Frontline staff"]
+
 # TODO(Isabella): comes from the logged-in user once accounts are built
 CURRENT_USER = {
     "id": 1,
     "first_name": "Alex",
     "initials": "AL",
+    "role": "learner",
     "role_group": "Office staff",
     "org": "Riverside Accounting",
     "streak_weeks": 3,
@@ -55,6 +66,11 @@ BADGES = [
 STATUS_LABELS = {"new": "New", "in_progress": "In progress", "done": "Done"}
 
 
+def is_admin(user):
+    """True if this user is a Learning administrator (for the admin pages, once they exist)."""
+    return user["role"] == "admin"
+
+
 def get_track(track_id):
     """Find one track by its id."""
     for track in TRACKS:
@@ -72,7 +88,9 @@ def get_lab(lab_id):
     for lab in LABS:
         if lab["id"] == lab_id:
             content = lab_content.LAB_CONTENT.get(lab_id, {})
-            return {**lab_content.PLACEHOLDER, **content, **lab}
+            stage = get_progress_stage(lab_id)
+            progress = {"stage": stage, "step": STAGES[stage]}
+            return {**lab_content.PLACEHOLDER, **content, **lab, **progress}
     return None
 
 
@@ -88,6 +106,39 @@ def track_progress():
     return rows
 
 
+def choices_for_try(lab, try_number):
+    """The choices for one try. Try 2 uses the lab's own retry_choices if Justin wrote them."""
+    if try_number == 2:
+        return lab.get("retry_choices") or lab["choices"]
+    return lab["choices"]
+
+
+def shuffled_retry_choices(lab):
+    """Try 2's choices in a new order, re-lettered A, B, C... so the letter from try 1 means nothing.
+
+    The safe choice always moves to a different spot than it had in try 1.
+    Each choice keeps its real "key" (what the browser sends back) and gets a "letter" (what it shows).
+    """
+    original = choices_for_try(lab, 2)
+    first_try_safe_spot = next((i for i, c in enumerate(lab["choices"]) if c["safe"]), None)
+
+    def safe_spot(choices):
+        return next((i for i, c in enumerate(choices) if c["safe"]), None)
+
+    shuffled = random.sample(original, len(original))
+    # Only reshuffle when moving is possible (at least one safe and one unsafe choice),
+    # so a content mistake can never loop forever
+    can_move = (
+        len(original) > 1
+        and first_try_safe_spot is not None
+        and any(c["safe"] for c in original)
+        and any(not c["safe"] for c in original)
+    )
+    while can_move and safe_spot(shuffled) == first_try_safe_spot:
+        shuffled = random.sample(original, len(original))
+    return [{**choice, "letter": chr(ord("A") + i)} for i, choice in enumerate(shuffled)]
+
+
 def closest_track():
     """The started track with the fewest labs left (for the line under the ring)."""
     started = [t for t in track_progress() if 0 < t["done"] < t["total"]]
@@ -101,10 +152,68 @@ def closest_track():
 ATTEMPTS = []
 
 
+def first_try_safe(lab_id):
+    """Was the learner's latest first try on this lab safe? None if there's no first try yet."""
+    for record in reversed(ATTEMPTS):
+        if record["lab_id"] == lab_id and record["user_id"] == CURRENT_USER["id"] and record["try_number"] == 1:
+            return record["safe"]
+    return None
+
+
+# Lab player stages, and which step (1-4) of the stepper each one belongs to.
+# Names match data-stage in lab_play.html.
+STAGES = {"learn": 1, "decide": 2, "result": 2, "control": 3, "retry": 4}
+
+# Where each learner is in each lab, so Resume opens the right stage.
+# Key: (user_id, lab_id). Value: {"stage": ..., "updated_at": ...}
+# TODO(Isabella): move to a "progress" table next to "attempts". This empties when the server restarts.
+# Lab 1 starts at "decide" so the demo resume card has something to show.
+PROGRESS = {(1, 1): {"stage": "decide", "updated_at": None}}
+
+
+def get_progress_stage(lab_id):
+    """The stage the current user should land on in this lab ("learn" if they haven't started)."""
+    saved = PROGRESS.get((CURRENT_USER["id"], lab_id))
+    if saved is None:
+        return "learn"
+    # "What happened" needs the first try. If it's gone (server restarted), go back to the question.
+    if saved["stage"] == "result" and first_try_safe(lab_id) is None:
+        return "decide"
+    return saved["stage"]
+
+
+def has_progress(lab_id):
+    """True if the current user started this lab and hasn't finished it."""
+    return (CURRENT_USER["id"], lab_id) in PROGRESS
+
+
+def resume_lab_id():
+    """The lab the current user worked on most recently and hasn't finished, or None."""
+    mine = [(lab_id, saved) for (user_id, lab_id), saved in PROGRESS.items() if user_id == CURRENT_USER["id"]]
+    if not mine:
+        return None
+    # updated_at is an ISO date string, so text order is time order. The demo seed has None, so it sorts first.
+    return max(mine, key=lambda item: item[1]["updated_at"] or "")[0]
+
+
+def save_progress(lab_id, stage):
+    """Remember which stage the current user reached in this lab."""
+    PROGRESS[(CURRENT_USER["id"], lab_id)] = {
+        "stage": stage,
+        # Full precision so two saves in the same second still sort in order (see resume_lab_id)
+        "updated_at": datetime.now().isoformat(timespec="microseconds"),
+    }
+
+
+def clear_progress(lab_id):
+    """Forget the current user's place in this lab (they finished it)."""
+    PROGRESS.pop((CURRENT_USER["id"], lab_id), None)
+
+
 def save_attempt(lab_id, try_number, choice, seconds, hints_used):
     """Record one try and return it. Flask decides if the choice was safe, not the browser."""
     lab = get_lab(lab_id)
-    picked = next(c for c in lab["choices"] if c["key"] == choice)
+    picked = next(c for c in choices_for_try(lab, try_number) if c["key"] == choice)
     record = {
         "lab_id": lab_id,
         "user_id": CURRENT_USER["id"],

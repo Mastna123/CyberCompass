@@ -15,6 +15,7 @@ def inject_globals():
     """Values every template can use without passing them each time."""
     return {
         "user": data.CURRENT_USER,
+        "role_label": data.PERMISSION_ROLES[data.CURRENT_USER["role"]],   # "Learner" or "Learning administrator"
         "get_track": data.get_track,
         "status_labels": data.STATUS_LABELS,
     }
@@ -23,8 +24,8 @@ def inject_globals():
 @app.route("/")
 def home():
     """Dashboard: what the learner should do next and how they're doing."""
-    in_progress = next((lab for lab in data.LABS if lab["status"] == "in_progress"), None)
-    in_progress_lab = data.get_lab(in_progress["id"]) if in_progress else None
+    resume_id = data.resume_lab_id()                      # most recently worked on, not finished
+    in_progress_lab = data.get_lab(resume_id) if resume_id else None
     assigned_labs = [lab for lab in data.LABS if lab["assigned"] and lab["status"] != "done"]
     finished_labs = [lab for lab in data.LABS if lab["status"] == "done"]
 
@@ -66,6 +67,9 @@ def library():
         tracks=data.TRACKS,
         selected_track=selected_track,
         selected_status=selected_status,
+        # A real track with no labs yet (like Emerging risk) gets a "coming soon" message
+        track_coming_soon=bool(selected_track) and data.get_track(selected_track) is not None
+            and not any(lab["track"] == selected_track for lab in data.LABS),
     )
 
 
@@ -91,7 +95,20 @@ def lab_play(lab_id):
     lab = data.get_lab(lab_id)
     if lab is None:
         abort(404)
-    return render_template("lab_play.html", lab=lab, steps=lab_content.LAB_STEPS)
+    return render_template(
+        "lab_play.html",
+        lab=lab,
+        steps=lab_content.LAB_STEPS,
+        start_stage=lab["stage"],                         # where Resume picks up
+        first_try_safe=data.first_try_safe(lab_id),       # for "What happened" on resume
+        retry_choices=data.shuffled_retry_choices(lab),   # new order and letters for Try it again
+    )
+
+
+def json_object():
+    """The JSON body the browser sent, or {} if it's missing or isn't a {...} object."""
+    body = request.get_json(silent=True)
+    return body if isinstance(body, dict) else {}
 
 
 def whole_number(value, low, high):
@@ -111,11 +128,14 @@ def record_attempt(lab_id):
     if lab is None:
         abort(404)
 
-    body = request.get_json(silent=True) or {}
+    body = json_object()
     choice = body.get("choice")
     try_number = body.get("try_number")
-    valid_choices = [c["key"] for c in lab["choices"]]
-    if choice not in valid_choices or try_number not in (1, 2):
+    # type() check: JSON true would otherwise count as 1
+    if type(try_number) is not int or try_number not in (1, 2):
+        return jsonify({"error": "Invalid attempt"}), 400
+    valid_choices = [c["key"] for c in data.choices_for_try(lab, try_number)]
+    if choice not in valid_choices:
         return jsonify({"error": "Invalid attempt"}), 400
 
     record = data.save_attempt(
@@ -125,4 +145,21 @@ def record_attempt(lab_id):
         seconds=whole_number(body.get("seconds"), 0, 3600),
         hints_used=whole_number(body.get("hints_used"), 0, 50),
     )
+    if try_number == 2:
+        data.clear_progress(lab_id)   # finished, so there's nothing left to resume
     return jsonify(record), 201
+
+
+# TODO(Isabella): add CSRF protection to this route when login is added
+@app.post("/api/labs/<int:lab_id>/progress")
+def record_progress(lab_id):
+    """Save which stage of the lab player the learner reached, so Resume can open there."""
+    if data.get_lab(lab_id) is None:
+        abort(404)
+
+    stage = json_object().get("stage")
+    if not isinstance(stage, str) or stage not in data.STAGES:
+        return jsonify({"error": "Invalid stage"}), 400
+
+    data.save_progress(lab_id, stage)
+    return jsonify({"stage": stage}), 200

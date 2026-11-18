@@ -47,7 +47,11 @@
             {% for lab in labs %}
             {% include "partials/lab_card.html" %}
             {% else %}
+            {% if track_coming_soon %}
+            <p class="cc-meta">Labs for this track are coming soon.</p>
+            {% else %}
             <p class="cc-meta">No labs match these filters.</p>
+            {% endif %}
             {% endfor %}
         </div>
     </section>
