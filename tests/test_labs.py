@@ -302,6 +302,19 @@ class FeedbackTest(CleanStateTest):
         page = self.client.get(f"/labs/{self.lab_id}/play").get_data(as_text=True)
         self.assertIn('<strong id="retry-safe-label"></strong>', page)
 
+    def test_overview_highlights_saved_step(self):
+        self.client.post(f"/api/labs/{self.lab_id}/progress", json={"stage": "control"})
+        page = self.client.get(f"/labs/{self.lab_id}").get_data(as_text=True)
+        self.assertEqual(page.count('class="cc-step done"'), 2)
+        self.assertEqual(page.count('class="cc-step current"'), 1)
+        self.assertIn("Resume lab", page)
+
+    def test_overview_new_lab_starts_at_step_one(self):
+        lab = next(l for l in data.LABS if not data.has_progress(l["id"]))
+        page = self.client.get(f"/labs/{lab['id']}").get_data(as_text=True)
+        self.assertEqual(page.count('class="cc-step done"'), 0)
+        self.assertIn("Start lab", page)
+        
 class AttemptApiTest(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()

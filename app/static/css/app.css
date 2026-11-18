@@ -702,6 +702,8 @@ a {
     color: var(--on-primary);
 }
 
+.cc-step.done .cc-step-num { background: var(--success); border-color: var(--success); color: #fff; }
+
 .cc-preview {
     min-height: 160px;
     padding: 16px;

@@ -86,6 +86,8 @@ def lab_overview(lab_id):
         lab=lab,
         track=data.get_track(lab["track"]),
         steps=lab_content.LAB_STEPS,
+        current_step=lab["step"],                      # which step "How this lab works" highlights
+        started=data.has_progress(lab_id),             # "Resume lab" instead of "Start lab"
     )
 
 
